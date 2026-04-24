@@ -113,7 +113,7 @@ Schedule times between now and: ${nextWeek.toDateString()}`;
       ? { contact: { name: dealCtx.primaryContact.name, email: dealCtx.primaryContact.email, phone: "", company: dealCtx.account?.name || "", title: "", consentEmail: dealCtx.primaryContact.consentEmail, consentSms: false, consentSummary: dealCtx.primaryContact.consentEmail ? "email consent granted" : "NO email consent", firstName: "", lastName: "" }, account: null, deals: [] }
       : null;
 
-    let compliance = [{ rule: "CAN-SPAM", status: "pass" as const, detail: "Scheduling email" }];
+    let compliance: { rule: string; status: string; detail: string }[] = [{ rule: "CAN-SPAM", status: "pass", detail: "Scheduling email" }];
     if (primaryContactFull) {
       const complianceResult = await runComplianceCheck({ type: "EMAIL", subject, body: emailBody }, primaryContactFull);
       compliance = complianceResult.rules.map((r) => ({ rule: r.rule, status: r.status, detail: r.detail }));

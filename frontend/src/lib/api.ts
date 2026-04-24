@@ -138,6 +138,7 @@ export interface Task {
   contact_id: string | null;
   deal_id: string | null;
   status: string;
+  custom_fields?: Record<string, unknown> | null;
   ai_proposed: boolean;
   created_at: string;
   updated_at: string;
