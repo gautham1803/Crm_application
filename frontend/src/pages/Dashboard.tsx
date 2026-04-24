@@ -10,7 +10,7 @@ export default function DashboardPage() {
   const { data: dealsRes } = useQuery({ queryKey: ["deals"], queryFn: () => dealsApi.list({}) });
   const { data: tasksRes } = useQuery({ queryKey: ["tasks"], queryFn: () => tasksApi.list({}) });
   const { data: contactsRes } = useQuery({ queryKey: ["contacts"], queryFn: () => contactsApi.list({}) });
-  const { pendingApprovalsCount, role, contactScores, opportunityAlerts } = useAppStore();
+  const { pendingApprovalsCount, role, contactScores, opportunityAlerts, winProbabilities } = useAppStore();
 
   const deals: Deal[] = dealsRes?.data?.items || [];
   const tasks: Task[] = tasksRes?.data?.items || [];
@@ -335,6 +335,56 @@ export default function DashboardPage() {
             ));
           })()}
         </div>
+
+        {/* DEALS AT RISK */}
+        {(() => {
+          const atRisk = Object.entries(winProbabilities)
+            .filter(([, data]) => data.probability < 40)
+            .sort(([, a], [, b]) => a.probability - b.probability);
+          if (atRisk.length === 0) return null;
+          return (
+            <div className="card" style={{ borderLeft: "3px solid var(--error)" }}>
+              <div className="section-header">
+                <span className="section-title">⚠️ Deals at Risk</span>
+                <span className="section-link" onClick={() => window.location.hash = "/deals"}>View pipeline →</span>
+              </div>
+              {atRisk.slice(0, 5).map(([dealName, data], idx) => {
+                const probColor = data.probability < 20 ? "var(--error)" : "var(--warning)";
+                return (
+                  <div key={dealName} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 0", borderBottom: idx < Math.min(atRisk.length, 5) - 1 ? "1px solid var(--border-subtle)" : "none", cursor: "pointer" }} onClick={() => window.location.hash = "/deals"}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                      background: `${probColor}15`, color: probColor,
+                      fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 700,
+                    }}>
+                      {data.probability}%
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 500 }}>{dealName}</div>
+                      {data.factors?.length > 0 && (
+                        <div style={{ fontSize: 10, color: "var(--text-tertiary)", lineHeight: 1.4, marginTop: 2 }}>{data.factors[0]}</div>
+                      )}
+                    </div>
+                    {/* Mini sparkline */}
+                    {data.history.length > 1 && (() => {
+                      const h = data.history;
+                      const w = 50, ht = 16;
+                      const minV = Math.max(0, Math.min(...h) - 5);
+                      const maxV = Math.min(100, Math.max(...h) + 5);
+                      const range = maxV - minV || 1;
+                      const pts = h.map((v, i) => `${(i / (h.length - 1)) * w},${ht - ((v - minV) / range) * ht}`).join(" ");
+                      return (
+                        <svg width={w} height={ht} style={{ flexShrink: 0 }}>
+                          <polyline points={pts} fill="none" stroke={probColor} strokeWidth="1.5" strokeLinecap="round" />
+                        </svg>
+                      );
+                    })()}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

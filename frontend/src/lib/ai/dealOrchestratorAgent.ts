@@ -10,6 +10,8 @@ export interface DealOrchestrationResult {
   immediateActions: { action: string; reason: string; urgency: string; type: string }[];
   stalledReason: string;
   winProbabilityAssessment: string;
+  winProbability: number;
+  probabilityFactors: string[];
   shouldDraftEmail: boolean;
   emailGoal: string;
   bestContactForEmail: string;
@@ -40,6 +42,8 @@ Return ONLY this JSON:
   ],
   "stalledReason": "why it might be stalled, or empty string",
   "winProbabilityAssessment": "assessment of win likelihood",
+  "winProbability": 0-100,
+  "probabilityFactors": ["factor 1 affecting probability", "factor 2"],
   "shouldDraftEmail": true or false,
   "emailGoal": "what the email should accomplish",
   "bestContactForEmail": "name of the contact to email"
@@ -79,6 +83,8 @@ ${dealCtx.contacts.map((c) => `- ${c.name} (${c.title}) — email consent: ${c.c
       immediateActions: parsed.immediateActions || [],
       stalledReason: parsed.stalledReason || "",
       winProbabilityAssessment: parsed.winProbabilityAssessment || "",
+      winProbability: parsed.winProbability || parsed.healthScore || 50,
+      probabilityFactors: parsed.probabilityFactors || [],
       shouldDraftEmail: parsed.shouldDraftEmail || false,
       emailGoal: parsed.emailGoal || "",
       bestContactForEmail: parsed.bestContactForEmail || dealCtx.primaryContact?.name || "",

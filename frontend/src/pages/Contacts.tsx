@@ -359,44 +359,69 @@ export default function ContactsPage() {
               </div>
             </div>
 
-            {/* AI Lead Score */}
+            {/* BANT Intelligence Panel */}
             {(() => {
               const fullName = `${detailContact.first_name} ${detailContact.last_name}`;
               const score = contactScores[fullName];
               if (!score) return null;
               const qualColor = score.qualification === "hot" ? "var(--error)" : score.qualification === "warm" ? "var(--warning)" : "var(--text-tertiary)";
               const qualBg = score.qualification === "hot" ? "rgba(248,113,113,0.08)" : score.qualification === "warm" ? "rgba(251,191,36,0.08)" : "rgba(148,163,184,0.08)";
+              const confColor = score.confidenceLevel === "high" ? "var(--success)" : score.confidenceLevel === "medium" ? "var(--warning)" : "var(--text-tertiary)";
+              const dimensionLabels: Record<string, string> = { budget: "💰 Budget", authority: "👤 Authority", need: "🎯 Need", timeline: "⏱ Timeline" };
+              const dimensionWeights: Record<string, string> = { budget: "25%", authority: "25%", need: "30%", timeline: "20%" };
               return (
                 <div style={{ background: qualBg, borderRadius: "var(--r-md)", padding: 16, border: `1px solid ${qualColor}30` }}>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: qualColor, textTransform: "uppercase", letterSpacing: 1, fontFamily: "var(--font-display)" }}>🎯 AI Lead Score</div>
-                    <span style={{ padding: "2px 10px", borderRadius: 12, fontSize: 12, fontWeight: 700, fontFamily: "var(--font-mono)", background: qualColor, color: "#fff" }}>
-                      {score.overallScore}/100 · {score.qualification.toUpperCase()}
-                    </span>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: qualColor, textTransform: "uppercase", letterSpacing: 1, fontFamily: "var(--font-display)" }}>🎯 BANT Intelligence</div>
+                    <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                      <span style={{ padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 600, fontFamily: "var(--font-mono)", background: confColor + "20", color: confColor, border: `1px solid ${confColor}40` }}>
+                        {score.confidenceLevel?.toUpperCase() || "MEDIUM"} conf.
+                      </span>
+                      <span style={{ padding: "2px 10px", borderRadius: 12, fontSize: 12, fontWeight: 700, fontFamily: "var(--font-mono)", background: qualColor, color: "#fff" }}>
+                        {score.overallScore}/100 · {score.qualification.toUpperCase()}
+                      </span>
+                    </div>
                   </div>
+
+                  {/* Per-dimension breakdown */}
                   {score.bantScore && (
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 12 }}>
-                      {Object.entries(score.bantScore).map(([key, val]: [string, any]) => (
-                        <div key={key} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 11, fontWeight: 600, width: 70, color: "var(--text-secondary)", textTransform: "capitalize" }}>{key}</span>
-                          <div style={{ flex: 1, height: 6, borderRadius: 3, background: "var(--bg-elevated)", overflow: "hidden" }}>
-                            <div style={{ width: `${(val.score / 10) * 100}%`, height: "100%", borderRadius: 3, background: qualColor, transition: "width 0.5s" }} />
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
+                      {Object.entries(score.bantScore).map(([key, val]: [string, any]) => {
+                        const barColor = val.score >= 7 ? "var(--success)" : val.score >= 4 ? "var(--warning)" : "var(--error)";
+                        return (
+                          <div key={key}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
+                              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)" }}>{dimensionLabels[key] || key}</span>
+                              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <span style={{ fontSize: 9, color: "var(--text-tertiary)", fontFamily: "var(--font-mono)" }}>weight: {dimensionWeights[key]}</span>
+                                <span style={{ fontSize: 11, fontFamily: "var(--font-mono)", fontWeight: 700, color: barColor }}>{val.score}/10</span>
+                              </div>
+                            </div>
+                            <div style={{ height: 6, borderRadius: 3, background: "var(--bg-elevated)", overflow: "hidden", marginBottom: 3 }}>
+                              <div style={{ width: `${(val.score / 10) * 100}%`, height: "100%", borderRadius: 3, background: barColor, transition: "width 0.8s ease" }} />
+                            </div>
+                            <div style={{ fontSize: 10, color: "var(--text-tertiary)", fontStyle: "italic", paddingLeft: 2 }}>{val.reasoning}</div>
                           </div>
-                          <span style={{ fontSize: 10, fontFamily: "var(--font-mono)", color: "var(--text-tertiary)", width: 24, textAlign: "right" }}>{val.score}</span>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Key insights */}
+                  {score.keyInsights?.length > 0 && (
+                    <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 10, borderTop: `1px solid ${qualColor}15`, paddingTop: 10 }}>
+                      {score.keyInsights.map((insight: string, i: number) => (
+                        <div key={i} style={{ marginBottom: 3, display: "flex", gap: 6 }}>
+                          <span style={{ color: qualColor, flexShrink: 0 }}>▸</span> {insight}
                         </div>
                       ))}
                     </div>
                   )}
-                  {score.keyInsights && (
-                    <div style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 8 }}>
-                      {score.keyInsights.map((insight: string, i: number) => (
-                        <div key={i} style={{ marginBottom: 2 }}>• {insight}</div>
-                      ))}
-                    </div>
-                  )}
+
+                  {/* Recommended next action */}
                   {score.recommendedNextAction && (
-                    <div style={{ fontSize: 11, color: qualColor, fontWeight: 600, borderTop: `1px solid ${qualColor}20`, paddingTop: 8, marginTop: 4 }}>
-                      ➜ {score.recommendedNextAction}
+                    <div style={{ fontSize: 11, color: qualColor, fontWeight: 600, borderTop: `1px solid ${qualColor}20`, paddingTop: 8, marginTop: 4, display: "flex", gap: 6, alignItems: "center" }}>
+                      <span>➜</span> {score.recommendedNextAction}
                     </div>
                   )}
                 </div>

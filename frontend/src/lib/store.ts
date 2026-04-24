@@ -143,6 +143,18 @@ interface AppState {
   proposalDocuments: Record<string, ProposalDocument>;
   setProposalDocument: (dealName: string, doc: ProposalDocument) => void;
 
+  // Win probabilities per deal
+  winProbabilities: Record<string, { probability: number; history: number[]; factors: string[]; lastUpdated: string }>;
+  setWinProbability: (dealName: string, data: { probability: number; factors: string[] }) => void;
+
+  // Post-win expansion signals per account
+  expansionSignals: Record<string, { signals: { signal: string; strength: string; source: string }[]; readinessScore: number; checkInDue: boolean; timestamp: string }>;
+  setExpansionSignals: (accountName: string, data: { signals: any[]; readinessScore: number; checkInDue: boolean }) => void;
+
+  // Competitor intel per account
+  competitorIntel: Record<string, { competitors: { name: string; category: string; weakness: string }[]; painPoints: string[]; positioningLine: string; timestamp: string }>;
+  setCompetitorIntel: (accountName: string, data: { competitors: any[]; painPoints: string[]; positioningLine: string }) => void;
+
   // Meetings
   meetings: Meeting[];
   addMeeting: (m: Omit<Meeting, "id">) => void;
@@ -289,6 +301,25 @@ export const useAppStore = create<AppState>((set, get) => ({
   proposalDocuments: {},
   setProposalDocument: (dealName: string, doc: ProposalDocument) =>
     set((s) => ({ proposalDocuments: { ...s.proposalDocuments, [dealName]: doc } })),
+
+  // Win probabilities
+  winProbabilities: {},
+  setWinProbability: (dealName: string, data: { probability: number; factors: string[] }) =>
+    set((s) => {
+      const existing = s.winProbabilities[dealName];
+      const history = existing ? [...existing.history, data.probability].slice(-5) : [data.probability];
+      return { winProbabilities: { ...s.winProbabilities, [dealName]: { probability: data.probability, history, factors: data.factors, lastUpdated: new Date().toISOString() } } };
+    }),
+
+  // Expansion signals
+  expansionSignals: {},
+  setExpansionSignals: (accountName: string, data: { signals: any[]; readinessScore: number; checkInDue: boolean }) =>
+    set((s) => ({ expansionSignals: { ...s.expansionSignals, [accountName]: { ...data, timestamp: new Date().toISOString() } } })),
+
+  // Competitor intel
+  competitorIntel: {},
+  setCompetitorIntel: (accountName: string, data: { competitors: any[]; painPoints: string[]; positioningLine: string }) =>
+    set((s) => ({ competitorIntel: { ...s.competitorIntel, [accountName]: { ...data, timestamp: new Date().toISOString() } } })),
 
   // Meetings — seed realistic data
   meetings: [

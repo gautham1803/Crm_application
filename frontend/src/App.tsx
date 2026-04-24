@@ -9,6 +9,7 @@ import TasksPage from "./pages/Tasks";
 import AICommandPage from "./pages/AICommand";
 import ApprovalsPage from "./pages/Approvals";
 import CalendarPage from "./pages/Calendar";
+import OpportunityAlertsPage from "./pages/OpportunityAlerts";
 import { wsClient } from "./lib/websocket";
 import { useAppStore } from "./lib/store";
 
@@ -60,6 +61,8 @@ export default function App() {
         return <ApprovalsPage />;
       case route.startsWith("/calendar"):
         return <CalendarPage />;
+      case route.startsWith("/opportunity-alerts"):
+        return <OpportunityAlertsPage />;
       default:
         return <Dashboard />;
     }

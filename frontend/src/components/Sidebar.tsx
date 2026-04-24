@@ -11,6 +11,7 @@ import {
   Wand2,
   CheckCircle,
   PanelLeft,
+  Bell,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -25,12 +26,17 @@ const NAV_ITEMS = [
 
 const AI_ITEMS = [
   { label: "AI Command", icon: Wand2, path: "/ai" },
-  { label: "Approvals", icon: CheckCircle, path: "/approvals" },
+  { label: "Approvals", icon: CheckCircle, path: "/approvals", badgeType: "approvals" },
+  { label: "Opp. Alerts", icon: Bell, path: "/opportunity-alerts", badgeType: "oppAlerts" },
 ];
 
 export default function Sidebar() {
   const navPosition = useAppStore((s) => s.navPosition);
   const toggleNavPosition = useAppStore((s) => s.toggleNavPosition);
+  const approvalsList = useAppStore((s) => s.approvalsList);
+  const opportunityAlerts = useAppStore((s) => s.opportunityAlerts);
+  
+  const pendingApprovalsCount = approvalsList.filter(a => !a.dismissed).length;
 
   if (navPosition !== "left") {
     return null;
@@ -95,8 +101,30 @@ export default function Sidebar() {
               }
             }}
           >
-            <Icon size={18} />
-            <span>{item.label}</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flex: 1 }}>
+              <Icon size={18} />
+              <span>{item.label}</span>
+            </div>
+            
+            {/* Badges */}
+            {(item as any).badgeType === "approvals" && pendingApprovalsCount() > 0 && (
+              <span style={{
+                background: "var(--ai)", color: "#fff",
+                fontSize: 10, fontWeight: 700, padding: "2px 6px",
+                borderRadius: 12, fontFamily: "var(--font-mono)", lineHeight: 1,
+              }}>
+                {pendingApprovalsCount()}
+              </span>
+            )}
+            {(item as any).badgeType === "oppAlerts" && opportunityAlerts.filter(a => !a.dismissed).length > 0 && (
+              <span style={{
+                background: "var(--warning)", color: "#fff",
+                fontSize: 10, fontWeight: 700, padding: "2px 6px",
+                borderRadius: 12, fontFamily: "var(--font-mono)", lineHeight: 1,
+              }}>
+                {opportunityAlerts.filter(a => !a.dismissed).length}
+              </span>
+            )}
           </button>
         );
       })}

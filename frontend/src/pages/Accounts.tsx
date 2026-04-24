@@ -201,7 +201,7 @@ type AccountTab = "overview" | "contacts" | "deals" | "documents";
 function AccountDetail({ account, onEdit, onDelete }: { account: Account; onEdit: () => void; onDelete: () => void }) {
   const [tab, setTab] = useState<AccountTab>("overview");
   const { startRun } = useAgentSimulation();
-  const { researchResults } = useAppStore();
+  const { researchResults, competitorIntel, expansionSignals } = useAppStore();
   const qc = useQueryClient();
 
   // Real data from API
@@ -353,6 +353,78 @@ function AccountDetail({ account, onEdit, onDelete }: { account: Account; onEdit
                     ➡ {research.recommendedNextAction}
                   </div>
                 )}
+              </div>
+            );
+          })()}
+
+          {/* Competitor Intel Panel */}
+          {(() => {
+            const intel = competitorIntel[account.name];
+            if (!intel || !intel.competitors?.length) return null;
+            return (
+              <div style={{ background: "rgba(248,113,113,0.04)", borderRadius: "var(--r-md)", padding: 16, border: "1px solid rgba(248,113,113,0.15)" }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: "var(--error)", textTransform: "uppercase", letterSpacing: 1, fontFamily: "var(--font-display)", marginBottom: 12 }}>⚔️ Competitor Intel</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+                  {intel.competitors.map((c: any, i: number) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", borderRadius: 8, background: "var(--bg-elevated)" }}>
+                      <div style={{ width: 28, height: 28, borderRadius: 6, background: "rgba(248,113,113,0.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "var(--error)", flexShrink: 0 }}>
+                        {c.name?.charAt(0) || "?"}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600 }}>{c.name}</div>
+                        <div style={{ fontSize: 10, color: "var(--text-tertiary)" }}>{c.category}</div>
+                      </div>
+                      <div style={{ fontSize: 10, color: "var(--warning)", maxWidth: 140, textAlign: "right" }}>{c.weakness}</div>
+                    </div>
+                  ))}
+                </div>
+                {intel.painPoints?.length > 0 && (
+                  <div style={{ marginBottom: 10 }}>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Pain Points Not Addressed</div>
+                    {intel.painPoints.map((p: string, i: number) => (
+                      <div key={i} style={{ fontSize: 12, color: "var(--text-secondary)", marginBottom: 2, paddingLeft: 4 }}>▸ {p}</div>
+                    ))}
+                  </div>
+                )}
+                {intel.positioningLine && (
+                  <div style={{ fontSize: 11, color: "var(--ai)", fontWeight: 500, borderTop: "1px solid rgba(248,113,113,0.1)", paddingTop: 8, fontStyle: "italic" }}>
+                    💬 "{intel.positioningLine}"
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
+          {/* Expansion Signals Feed (for Closed Won accounts) */}
+          {(() => {
+            const expansion = expansionSignals[account.name];
+            if (!expansion || !expansion.signals?.length) return null;
+            const readinessColor = expansion.readinessScore >= 70 ? "var(--success)" : expansion.readinessScore >= 40 ? "var(--warning)" : "var(--text-tertiary)";
+            return (
+              <div style={{ background: "rgba(52,211,153,0.04)", borderRadius: "var(--r-md)", padding: 16, border: "1px solid rgba(52,211,153,0.15)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "var(--success)", textTransform: "uppercase", letterSpacing: 1, fontFamily: "var(--font-display)" }}>🚀 Expansion Signals</div>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                    {expansion.checkInDue && (
+                      <span style={{ padding: "2px 8px", borderRadius: 8, fontSize: 9, fontWeight: 600, background: "rgba(251,191,36,0.12)", color: "var(--warning)", border: "1px solid rgba(251,191,36,0.25)" }}>CHECK-IN DUE</span>
+                    )}
+                    <span style={{ padding: "2px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700, fontFamily: "var(--font-mono)", background: readinessColor + "15", color: readinessColor, border: `1px solid ${readinessColor}30` }}>
+                      Readiness: {expansion.readinessScore}/100
+                    </span>
+                  </div>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                  {expansion.signals.map((s: any, i: number) => {
+                    const sColor = s.strength === "strong" ? "var(--success)" : s.strength === "medium" ? "var(--warning)" : "var(--text-tertiary)";
+                    return (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", borderRadius: 8, background: "var(--bg-elevated)" }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: sColor, flexShrink: 0 }} />
+                        <span style={{ fontSize: 12, flex: 1 }}>{s.signal}</span>
+                        <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: sColor, textTransform: "uppercase" }}>{s.strength}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             );
           })()}

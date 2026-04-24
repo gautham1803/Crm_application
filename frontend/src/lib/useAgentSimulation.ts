@@ -182,13 +182,13 @@ export function useAgentSimulation() {
           store().addNotification({
             type: "agent_complete",
             title: `LeadQualifierAgent scored ${contactOrAccount}`,
-            description: `${result.overallScore}/100 (${result.qualification.toUpperCase()}) · Llama`,
+            description: `${result.overallScore}/100 (${result.qualification.toUpperCase()}) · Confidence: ${result.confidenceLevel} · Llama`,
             link: "/contacts",
           });
 
           showToast(`✦ ${contactOrAccount}: ${result.overallScore}/100 (${result.qualification.toUpperCase()})`, "ai");
 
-          // Auto-chain: Hot → Research → Nurturer, Warm → Research only
+          // Auto-chain: Hot/Warm → Research → Dual-channel Nurturer
           if (result.qualification === "hot" || result.qualification === "warm") {
             showToast("Running ResearchAgent on account...", "ai");
             try {
@@ -198,23 +198,45 @@ export function useAgentSimulation() {
                 store().addAiSpend(resResult.cost);
                 totalCost += resResult.cost;
                 store().addNotification({ type: "agent_complete", title: "ResearchAgent completed", description: `Auto-profiled ${contactOrAccount}`, link: "/accounts" });
+                // Store competitor intel if available
+                if (resResult.competitors?.length > 0) {
+                  const accountName = contacts.find(c => `${c.first_name} ${c.last_name}` === contactOrAccount)?.account_id
+                    ? accounts.find(a => a.id === contacts.find(c => `${c.first_name} ${c.last_name}` === contactOrAccount)?.account_id)?.name || contactOrAccount || ""
+                    : contactOrAccount || "";
+                  store().setCompetitorIntel(accountName, {
+                    competitors: resResult.competitors,
+                    painPoints: resResult.competitorPainPoints,
+                    positioningLine: resResult.positioningLine,
+                  });
+                }
               }
             } catch (e) { console.warn("[Chain] ResearchAgent failed:", e); }
 
-            if (result.qualification === "hot") {
-              const contact = contacts.find((c) => `${c.first_name} ${c.last_name}` === contactOrAccount);
-              if (contact?.consent_email) {
-                showToast("Hot lead — drafting outreach...", "ai");
-                try {
-                  const nurResult = await runNurturerAgent({ contacts, accounts, deals, contactName: contactOrAccount || "", goalType: "qualification", outputType: "EMAIL" });
-                  if (nurResult) {
-                    store().addApproval(nurResult.approval);
-                    store().addAiSpend(nurResult.cost);
-                    totalCost += nurResult.cost;
-                    store().addNotification({ type: "ai_draft", title: "NurturerAgent drafted outreach", description: `Auto-triggered for hot lead ${contactOrAccount}`, link: "/approvals" });
-                  }
-                } catch (e) { console.warn("[Chain] NurturerAgent failed:", e); }
-              }
+            // Draft dual-channel: Email + SMS for hot/warm leads
+            const contact = contacts.find((c) => `${c.first_name} ${c.last_name}` === contactOrAccount);
+            if (contact?.consent_email) {
+              showToast("Drafting outreach email...", "ai");
+              try {
+                const emailResult = await runNurturerAgent({ contacts, accounts, deals, contactName: contactOrAccount || "", goalType: "qualification", outputType: "EMAIL" });
+                if (emailResult) {
+                  store().addApproval(emailResult.approval);
+                  store().addAiSpend(emailResult.cost);
+                  totalCost += emailResult.cost;
+                  store().addNotification({ type: "ai_draft", title: "NurturerAgent drafted email", description: `Auto-triggered for ${result.qualification} lead ${contactOrAccount}`, link: "/approvals" });
+                }
+              } catch (e) { console.warn("[Chain] NurturerAgent email failed:", e); }
+            }
+            if (contact?.consent_sms && contact?.phone) {
+              showToast("Drafting welcome SMS...", "ai");
+              try {
+                const smsResult = await runNurturerAgent({ contacts, accounts, deals, contactName: contactOrAccount || "", goalType: "qualification", outputType: "SMS" });
+                if (smsResult) {
+                  store().addApproval(smsResult.approval);
+                  store().addAiSpend(smsResult.cost);
+                  totalCost += smsResult.cost;
+                  store().addNotification({ type: "ai_draft", title: "NurturerAgent drafted SMS", description: `Dual-channel for ${contactOrAccount}`, link: "/approvals" });
+                }
+              } catch (e) { console.warn("[Chain] NurturerAgent SMS failed:", e); }
             }
           }
         } else {
@@ -231,6 +253,14 @@ export function useAgentSimulation() {
           totalCost = result.cost;
           store().setResearchResult(contactOrAccount || "", result);
           store().addAiSpend(result.cost);
+          // Store competitor intel if available
+          if (result.competitors?.length > 0) {
+            store().setCompetitorIntel(contactOrAccount || "", {
+              competitors: result.competitors,
+              painPoints: result.competitorPainPoints || [],
+              positioningLine: result.positioningLine || "",
+            });
+          }
           store().addNotification({ type: "agent_complete", title: "ResearchAgent completed", description: `Profile updated for ${contactOrAccount} · Llama`, link: "/accounts" });
           showToast(`✦ ResearchAgent updated ${contactOrAccount}`, "ai");
         } else {
@@ -245,6 +275,12 @@ export function useAgentSimulation() {
           totalCost = result.cost;
           store().setDealInsight(contactOrAccount || "", result);
           store().addAiSpend(result.cost);
+
+          // Store win probability
+          store().setWinProbability(contactOrAccount || "", {
+            probability: result.winProbability,
+            factors: result.probabilityFactors,
+          });
 
           if (result.shouldDraftEmail && result.bestContactForEmail) {
             advanceUI();
@@ -264,11 +300,11 @@ export function useAgentSimulation() {
           store().addNotification({
             type: "agent_complete",
             title: `Deal Analysis: ${contactOrAccount}`,
-            description: `${result.dealHealth.toUpperCase()} (${result.healthScore}/100)`,
+            description: `${result.dealHealth.toUpperCase()} (${result.healthScore}/100) · Win: ${result.winProbability}%`,
             link: "/deals",
           });
 
-          showToast(`✦ ${contactOrAccount}: ${result.dealHealth.toUpperCase()} (${result.healthScore}/100)`, result.dealHealth === "critical" ? "error" : result.dealHealth === "stalled" ? "warning" : "ai");
+          showToast(`✦ ${contactOrAccount}: ${result.dealHealth.toUpperCase()} (Win: ${result.winProbability}%)`, result.dealHealth === "critical" ? "error" : result.dealHealth === "stalled" ? "warning" : "ai");
         } else {
           showToast("DealOrchestratorAgent failed — check API keys", "error");
         }
@@ -300,10 +336,9 @@ export function useAgentSimulation() {
             type: "agent_complete",
             title: result.alertMessage || `🔔 Opportunity signal for ${contactOrAccount}`,
             description: `Score: ${result.opportunityScore}/100 · Timing: ${result.recommendedTiming} · Mistral`,
-            link: "/",
+            link: "/opportunity-alerts",
           });
 
-          // Route to Dashboard opportunity alerts widget
           store().addOpportunityAlert({
             accountName: contactOrAccount || "Unknown",
             alertMessage: result.alertMessage || `Opportunity signal for ${contactOrAccount}`,
@@ -315,6 +350,36 @@ export function useAgentSimulation() {
             riskFactors: result.riskFactors,
             summary: result.summary,
           });
+
+          // Store expansion signals
+          if (result.expansionSignals?.length > 0) {
+            store().setExpansionSignals(contactOrAccount || "", {
+              signals: result.expansionSignals,
+              readinessScore: result.expansionReadiness,
+              checkInDue: result.checkInDue,
+            });
+          }
+
+          // Auto-chain: if expansion readiness > 70, draft upsell/referral email
+          if (result.expansionReadiness > 70) {
+            const accountContacts = contacts.filter(c => {
+              const acct = accounts.find(a => a.name === contactOrAccount);
+              return acct && c.account_id === acct.id && c.consent_email;
+            });
+            if (accountContacts.length > 0) {
+              const targetContact = `${accountContacts[0].first_name} ${accountContacts[0].last_name}`;
+              showToast(`Expansion ready — drafting upsell for ${targetContact}...`, "ai");
+              try {
+                const nurResult = await runNurturerAgent({ contacts, accounts, deals, contactName: targetContact, goalType: "post_close", outputType: "EMAIL" });
+                if (nurResult) {
+                  store().addApproval(nurResult.approval);
+                  store().addAiSpend(nurResult.cost);
+                  totalCost += nurResult.cost;
+                  store().addNotification({ type: "ai_draft", title: "Expansion email drafted", description: `Upsell/referral for ${targetContact} at ${contactOrAccount}`, link: "/approvals" });
+                }
+              } catch (e) { console.warn("[Chain] Expansion NurturerAgent failed:", e); }
+            }
+          }
 
           showToast(result.alertMessage || `✦ Opportunity signal for ${contactOrAccount}`, result.opportunityScore >= 70 ? "ai" : "warning");
         } else {

@@ -20,6 +20,9 @@ export interface OpportunityWatchResult {
   talkingPoints: string[];
   riskFactors: string[];
   summary: string;
+  expansionSignals: { signal: string; strength: string; source: string }[];
+  expansionReadiness: number;
+  checkInDue: boolean;
   model: string;
   cost: number;
 }
@@ -76,7 +79,12 @@ Return ONLY this JSON:
   "alertMessage": "one-line alert for the rep (start with emoji)",
   "talkingPoints": ["point 1", "point 2"],
   "riskFactors": ["risk 1"],
-  "summary": "2-3 sentence summary of the opportunity"
+  "summary": "2-3 sentence summary of the opportunity",
+  "expansionSignals": [
+    { "signal": "Expansion opportunity description", "strength": "strong|medium|weak", "source": "data source" }
+  ],
+  "expansionReadiness": 0-100,
+  "checkInDue": true or false
 }`;
 
   const userPrompt = `Analyze for buying signals and optimal outreach timing:\n${contextInfo}`;
@@ -102,6 +110,9 @@ Return ONLY this JSON:
       talkingPoints: parsed.talkingPoints || [],
       riskFactors: parsed.riskFactors || [],
       summary: parsed.summary || "",
+      expansionSignals: parsed.expansionSignals || [],
+      expansionReadiness: parsed.expansionReadiness || 0,
+      checkInDue: parsed.checkInDue || false,
       model: result.model,
       cost: result.cost,
     };

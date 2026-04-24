@@ -13,6 +13,9 @@ export interface ResearchResult {
   talkingPoints: string[];
   recommendedNextAction: string;
   riskFactors: string;
+  competitors: { name: string; category: string; weakness: string }[];
+  competitorPainPoints: string[];
+  positioningLine: string;
   researchedAt: string;
   model: string;
   cost: number;
@@ -45,7 +48,12 @@ Return ONLY this JSON structure:
   "potentialObjections": "Likely concerns or objections to address",
   "talkingPoints": ["point 1", "point 2", "point 3"],
   "recommendedNextAction": "Most effective next action for this account",
-  "riskFactors": "Potential risks or concerns for the deal"
+  "riskFactors": "Potential risks or concerns for the deal",
+  "competitors": [
+    { "name": "Competitor name", "category": "CRM/Marketing/Sales Tool", "weakness": "Key weakness vs Acufy" }
+  ],
+  "competitorPainPoints": ["Pain point competitors don't address", "Another gap"],
+  "positioningLine": "A subtle, non-aggressive competitive positioning sentence for outreach emails"
 }`;
 
   let contextInfo = "";
@@ -100,6 +108,9 @@ Deals: ${ctx.deals.map((d) => `${d.name} (${d.stage})`).join(", ") || "None"}`;
       talkingPoints: parsed.talkingPoints || [],
       recommendedNextAction: parsed.recommendedNextAction || "",
       riskFactors: parsed.riskFactors || "",
+      competitors: parsed.competitors || [],
+      competitorPainPoints: parsed.competitorPainPoints || [],
+      positioningLine: parsed.positioningLine || "",
       researchedAt: new Date().toLocaleTimeString(),
       model: result.model,
       cost: result.cost,

@@ -75,14 +75,19 @@ function DroppableColumn({ id, stage, total, count, children, quickAddStage, set
 function DraggableCard({ deal, stage, openEdit, handleDelete, openDetail }: any) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: deal.id });
   const meta = getDealMeta(deal.name);
-  const { dealInsights } = useAppStore();
+  const { dealInsights, winProbabilities } = useAppStore();
   const insight = dealInsights[deal.name];
+  const winProb = winProbabilities[deal.name];
   const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`, zIndex: 999, opacity: 0.85 } : undefined;
 
   const isB2B = meta?.type === "B2B";
   const displayName = meta?.contactOrAccount || deal.name.split(" ")[0];
   const daysInStage = meta?.daysInStage ?? 0;
   const closeDate = meta?.closeDate || deal.expected_close_date;
+
+  // Win probability from AI or fallback to deal.probability
+  const displayWinProb = winProb?.probability ?? deal.probability;
+  const winColor = displayWinProb >= 70 ? "var(--success)" : displayWinProb >= 40 ? "var(--warning)" : "var(--error)";
 
   return (
     <div ref={setNodeRef} style={{
@@ -133,7 +138,14 @@ function DraggableCard({ deal, stage, openEdit, handleDelete, openDetail }: any)
       )}
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <span style={{ fontSize: 10, fontWeight: 600, fontFamily: "var(--font-mono)", padding: "2px 7px", borderRadius: 10, background: "rgba(74,85,120,0.15)", color: "var(--text-tertiary)" }}>{deal.probability}%</span>
+        {/* Win probability badge */}
+        <span style={{
+          fontSize: 10, fontWeight: 600, fontFamily: "var(--font-mono)", padding: "2px 7px", borderRadius: 10,
+          background: winColor + "15", color: winColor, border: `1px solid ${winColor}30`,
+          display: "flex", alignItems: "center", gap: 3,
+        }}>
+          {winProb ? "🎯" : ""} {displayWinProb}%{winProb ? " win" : ""}
+        </span>
 
         {/* Days in stage warning */}
         {daysInStage > 7 && stage.name !== "Closed Won" && stage.name !== "Closed Lost" && (
@@ -336,9 +348,10 @@ function DealDetail({ deal, onEdit }: { deal: Deal; onEdit: () => void }) {
   const [tab, setTab] = useState<DealTab>("overview");
   const meta = getDealMeta(deal.name);
   const { startRun } = useAgentSimulation();
-  const { dealInsights, proposalDocuments } = useAppStore();
+  const { dealInsights, proposalDocuments, winProbabilities } = useAppStore();
   const insight = dealInsights[deal.name];
   const proposal = proposalDocuments[deal.name];
+  const winProb = winProbabilities[deal.name];
 
   const qc = useQueryClient();
   const launchDealAI = () => {
@@ -492,6 +505,72 @@ function DealDetail({ deal, onEdit }: { deal: Deal; onEdit: () => void }) {
                 )}
                 <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Win Assessment: {insight.winProbabilityAssessment}</div>
               </div>
+
+              {/* Win Probability + Sparkline */}
+              {winProb && (
+                <div style={{ background: "var(--bg-elevated)", borderRadius: "var(--r-md)", padding: 16, border: "1px solid var(--border-default)" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, fontFamily: "var(--font-display)" }}>🎯 Win Probability</div>
+                    <span style={{
+                      padding: "2px 10px", borderRadius: 12, fontSize: 14, fontWeight: 700, fontFamily: "var(--font-mono)",
+                      background: winProb.probability >= 70 ? "var(--success)" : winProb.probability >= 40 ? "var(--warning)" : "var(--error)",
+                      color: "#fff",
+                    }}>
+                      {winProb.probability}%
+                    </span>
+                  </div>
+
+                  {/* SVG Sparkline */}
+                  {winProb.history.length > 1 && (() => {
+                    const h = winProb.history;
+                    const w = 200, ht = 40;
+                    const minV = Math.max(0, Math.min(...h) - 10);
+                    const maxV = Math.min(100, Math.max(...h) + 10);
+                    const range = maxV - minV || 1;
+                    const points = h.map((v, i) => {
+                      const x = (i / (h.length - 1)) * w;
+                      const y = ht - ((v - minV) / range) * ht;
+                      return `${x},${y}`;
+                    }).join(" ");
+                    const gradId = `spark-${deal.id}`;
+                    const trendUp = h[h.length - 1] >= h[0];
+                    const lineColor = trendUp ? "var(--success)" : "var(--error)";
+                    return (
+                      <div style={{ marginBottom: 10 }}>
+                        <div style={{ fontSize: 10, color: "var(--text-tertiary)", marginBottom: 4 }}>Trend (last {h.length} updates)</div>
+                        <svg width={w} height={ht + 4} viewBox={`0 -2 ${w} ${ht + 4}`} style={{ overflow: "visible" }}>
+                          <defs>
+                            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor={lineColor} stopOpacity="0.3" />
+                              <stop offset="100%" stopColor={lineColor} stopOpacity="0" />
+                            </linearGradient>
+                          </defs>
+                          <polygon points={`0,${ht} ${points} ${w},${ht}`} fill={`url(#${gradId})`} />
+                          <polyline points={points} fill="none" stroke={lineColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                          {h.map((v, i) => {
+                            const x = (i / (h.length - 1)) * w;
+                            const y = ht - ((v - minV) / range) * ht;
+                            return <circle key={i} cx={x} cy={y} r="3" fill={lineColor} stroke="var(--bg-card)" strokeWidth="1.5" />;
+                          })}
+                        </svg>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--text-tertiary)", marginTop: 2 }}>
+                          {h.map((v, i) => <span key={i}>{v}%</span>)}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Probability Factors */}
+                  {winProb.factors?.length > 0 && (
+                    <div style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: 8 }}>
+                      <div style={{ fontSize: 10, fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>Contributing Factors</div>
+                      {winProb.factors.map((f: string, i: number) => (
+                        <div key={i} style={{ fontSize: 11, color: "var(--text-secondary)", marginBottom: 2, paddingLeft: 4 }}>▸ {f}</div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Immediate Actions */}
               {insight.immediateActions && insight.immediateActions.length > 0 && (

@@ -142,7 +142,12 @@ export default function ApprovalsPage() {
       <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: 16, height: "calc(100vh - 180px)" }}>
         {/* LIST PANEL */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8, overflowY: "auto" }}>
-          {activeApprovals.map((a, idx) => (
+          {activeApprovals.map((a, idx) => {
+            // Check if this approval has a paired counterpart (email+SMS for same contact)
+            const hasPair = activeApprovals.some(
+              (other) => other.id !== a.id && other.contactName === a.contactName && other.type !== a.type && !other.dismissed
+            );
+            return (
             <div key={a.id} onClick={() => setSelectedIdx(idx)}
               style={{
                 background: selectedIdx === idx ? "var(--bg-active)" : "var(--bg-card)",
@@ -153,13 +158,23 @@ export default function ApprovalsPage() {
               {selectedIdx !== idx && (
                 <div style={{ position: "absolute", top: 14, right: 14, width: 7, height: 7, borderRadius: "50%", background: "var(--accent)" }} className="ai-pulse" />
               )}
-              <div style={{
-                display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8, fontFamily: "var(--font-mono)",
-                background: a.type === "EMAIL" ? "rgba(56,189,248,0.1)" : "rgba(52,211,153,0.1)",
-                color: a.type === "EMAIL" ? "var(--accent)" : "var(--success)",
-                border: `1px solid ${a.type === "EMAIL" ? "rgba(56,189,248,0.2)" : "rgba(52,211,153,0.2)"}`,
-              }}>
-                {a.type === "EMAIL" ? "✉ Email" : "💬 SMS"}
+              <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+                <div style={{
+                  display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 6, fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5, fontFamily: "var(--font-mono)",
+                  background: a.type === "EMAIL" ? "rgba(56,189,248,0.1)" : "rgba(52,211,153,0.1)",
+                  color: a.type === "EMAIL" ? "var(--accent)" : "var(--success)",
+                  border: `1px solid ${a.type === "EMAIL" ? "rgba(56,189,248,0.2)" : "rgba(52,211,153,0.2)"}`,
+                }}>
+                  {a.type === "EMAIL" ? "✉ Email" : "💬 SMS"}
+                </div>
+                {hasPair && (
+                  <div style={{
+                    display: "inline-flex", alignItems: "center", gap: 3, padding: "2px 8px", borderRadius: 6, fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5, fontFamily: "var(--font-mono)",
+                    background: "rgba(167,139,250,0.1)", color: "var(--ai)", border: "1px solid rgba(167,139,250,0.2)",
+                  }}>
+                    ⚡ PAIRED
+                  </div>
+                )}
               </div>
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 4 }}>{a.contactName} · {a.companyName}</div>
               <div style={{ fontSize: 11, color: "var(--text-tertiary)", marginBottom: 6 }}>
@@ -172,7 +187,8 @@ export default function ApprovalsPage() {
                 ⏱ {a.expiresIn} remaining
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* DETAIL PANEL */}

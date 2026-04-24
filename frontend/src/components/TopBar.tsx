@@ -28,15 +28,17 @@ const MAIN_NAV = [
 
 const AI_NAV = [
   { path: "/ai", label: "AI Command", icon: Sparkles, isAI: true },
-  { path: "/approvals", label: "Approvals", icon: ShieldCheck, showBadge: true },
+  { path: "/approvals", label: "Approvals", icon: ShieldCheck, badgeType: "approvals" },
+  { path: "/opportunity-alerts", label: "Opp. Alerts", icon: Bell, badgeType: "oppAlerts" },
 ];
 
 export default function TopBar() {
   const {
-    devUser, setDevUser, pendingApprovalsCount, theme, toggleTheme,
+    devUser, setDevUser, theme, toggleTheme,
     setGlobalSearchOpen, notifications, markAllRead, agentRuns, role,
-    navPosition, toggleNavPosition,
+    navPosition, toggleNavPosition, opportunityAlerts, approvalsList
   } = useAppStore();
+  const pendingApprovalsCount = approvalsList.filter(a => !a.dismissed).length;
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.hash.slice(1) || "/");
@@ -129,14 +131,24 @@ export default function TopBar() {
         <Icon style={{ width: 14, height: 14, flexShrink: 0 }} />
         <span>{item.label}</span>
 
-        {item.showBadge && pendingApprovalsCount() > 0 && (
+        {(item as any).badgeType === "approvals" && pendingApprovalsCount > 0 && (
           <span style={{
             background: "var(--ai)", color: "#fff",
             fontSize: 9, fontWeight: 700, padding: "1px 5px",
             borderRadius: 10, fontFamily: "var(--font-mono)", lineHeight: 1.5,
             minWidth: 16, textAlign: "center",
           }}>
-            {pendingApprovalsCount()}
+            {pendingApprovalsCount}
+          </span>
+        )}
+        {(item as any).badgeType === "oppAlerts" && opportunityAlerts.filter(a => !a.dismissed).length > 0 && (
+          <span style={{
+            background: "var(--warning)", color: "#fff",
+            fontSize: 9, fontWeight: 700, padding: "1px 5px",
+            borderRadius: 10, fontFamily: "var(--font-mono)", lineHeight: 1.5,
+            minWidth: 16, textAlign: "center",
+          }}>
+            {opportunityAlerts.filter(a => !a.dismissed).length}
           </span>
         )}
 
