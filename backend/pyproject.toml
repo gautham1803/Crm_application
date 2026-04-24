@@ -1,0 +1,76 @@
+[project]
+name = "acufy-backend"
+version = "0.1.0"
+description = "Acufy CRM — AI-Powered Sales CRM Backend"
+requires-python = ">=3.12"
+dependencies = [
+    # Web framework
+    "fastapi[standard]>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    # Database
+    "sqlalchemy[asyncio]>=2.0.36",
+    "psycopg[binary,pool]>=3.2.0",
+    "alembic>=1.14.0",
+    "pgvector>=0.3.6",
+    # Settings & validation
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+    # Auth
+    "python-jose[cryptography]>=3.3.0",
+    "httpx>=0.28.0",
+    # Redis
+    "redis[hiredis]>=5.2.0",
+    # Background tasks
+    "arq>=0.26.0",
+    # AI / LLM
+    "litellm>=1.55.0",
+    "langgraph>=0.2.60",
+    "langgraph-checkpoint-postgres>=2.0.0",
+    "langfuse>=2.55.0",
+    # Messaging providers
+    "sendgrid>=6.11.0",
+    "twilio>=9.4.0",
+    # Storage
+    "supabase>=2.11.0",
+    # CSV
+    "python-multipart>=0.0.18",
+    # Utilities
+    "python-dateutil>=2.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "testcontainers[postgres,redis]>=4.8.0",
+    "httpx>=0.28.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "types-python-jose>=3.3.0",
+    "types-python-dateutil>=2.9.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM", "TCH"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

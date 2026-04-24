@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acufy CRM — Redesign Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg-base:#060A10;
+  --bg-surface:#0A0F1A;
+  --bg-card:#0D1421;
+  --bg-elevated:#111827;
+  --bg-hover:#162030;
+  --bg-active:#1A2540;
+  --border-subtle:rgba(255,255,255,0.04);
+  --border-default:rgba(255,255,255,0.08);
+  --border-strong:rgba(255,255,255,0.15);
+  --border-accent:rgba(56,189,248,0.35);
+  --text-primary:#F0F4FF;
+  --text-secondary:#8B9CC8;
+  --text-tertiary:#4A5578;
+  --accent:#38BDF8;
+  --accent-glow:rgba(56,189,248,0.15);
+  --accent-dim:rgba(56,189,248,0.5);
+  --ai:#A78BFA;
+  --ai-glow:rgba(167,139,250,0.15);
+  --success:#34D399;
+  --success-glow:rgba(52,211,153,0.12);
+  --warning:#FBBF24;
+  --warning-glow:rgba(251,191,36,0.12);
+  --error:#F87171;
+  --font-display:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --r-sm:6px;--r-md:10px;--r-lg:16px;--r-xl:24px;
+}
+body{font-family:var(--font-body);background:var(--bg-base);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+
+/* SHELL */
+.shell{display:flex;flex-direction:column;height:100vh}
+.topbar{height:56px;background:rgba(10,15,26,0.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;padding:0 20px;gap:16px;position:fixed;top:0;left:0;right:0;z-index:100}
+.logo{display:flex;align-items:center;gap:8px;min-width:200px}
+.logo-icon{width:28px;height:28px;background:linear-gradient(135deg,var(--accent),var(--ai));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 0 16px rgba(56,189,248,0.3)}
+.logo-text{font-family:var(--font-display);font-weight:700;font-size:16px;letter-spacing:-0.3px}
+.logo-sub{font-size:9px;color:var(--text-tertiary);letter-spacing:1.5px;font-weight:500;text-transform:uppercase;display:block;margin-top:-2px}
+.search-bar{flex:1;max-width:480px;position:relative}
+.search-bar input{width:100%;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:20px;padding:7px 16px 7px 36px;color:var(--text-primary);font-family:var(--font-body);font-size:13px;outline:none;transition:all 0.2s}
+.search-bar input:focus{border-color:var(--border-accent);box-shadow:0 0 0 3px var(--accent-glow);width:110%}
+.search-bar svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-tertiary)}
+.search-kbd{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);background:var(--bg-card);border:1px solid var(--border-default);border-radius:4px;padding:2px 6px}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.ai-badge{display:flex;align-items:center;gap:6px;padding:5px 10px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:20px;font-size:11px;color:var(--success);font-weight:500}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse-green 2s ease-in-out infinite}
+@keyframes pulse-green{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,0.4)}50%{box-shadow:0 0 0 5px rgba(52,211,153,0)}}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border-default);background:transparent;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;position:relative}
+.icon-btn:hover{background:var(--bg-hover);color:var(--text-primary);border-color:var(--border-strong)}
+.notif-badge{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:var(--ai);border:2px solid var(--bg-surface);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-mono)}
+.user-btn{display:flex;align-items:center;gap:8px;padding:4px 8px;border-radius:8px;cursor:pointer;transition:background 0.15s}
+.user-btn:hover{background:var(--bg-hover)}
+.user-avatar{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#4F46E5,#7C3AED);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.user-info{text-align:left}
+.user-name{font-size:12px;font-weight:500;font-family:var(--font-display)}
+.user-role{font-size:10px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.5px}
+
+/* MAIN LAYOUT */
+.main{display:flex;padding-top:56px;height:100vh}
+.sidebar{width:220px;min-width:220px;background:var(--bg-surface);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;position:fixed;top:56px;bottom:0;left:0;overflow-y:auto;transition:width 0.25s}
+.sidebar.collapsed{width:64px}
+.sidebar-section{padding:16px 12px 8px}
+.sidebar-label{font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--text-tertiary);text-transform:uppercase;padding:0 8px;margin-bottom:4px;font-family:var(--font-display)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--r-md);cursor:pointer;transition:all 0.15s;color:var(--text-secondary);font-size:13px;font-weight:500;position:relative;border-left:3px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-primary)}
+.nav-item.active{background:var(--bg-active);color:var(--text-primary);border-left-color:var(--accent)}
+.nav-item.active .nav-icon{color:var(--accent)}
+.nav-item.ai-item.active{background:linear-gradient(135deg,rgba(167,139,250,0.1),rgba(56,189,248,0.05));border-left-color:var(--ai)}
+.nav-item.ai-item.active .nav-icon{color:var(--ai)}
+.nav-icon{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--ai);color:#fff;font-size:10px;font-weight:700;font-family:var(--font-mono);padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border-subtle)}
+.collapse-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--r-md);cursor:pointer;color:var(--text-tertiary);font-size:12px;transition:all 0.15s}
+.collapse-btn:hover{background:var(--bg-hover);color:var(--text-secondary)}
+
+/* CONTENT */
+.content{margin-left:220px;flex:1;overflow-y:auto;padding:28px;background:var(--bg-base)}
+.page{display:none}
+.page.active{display:block;animation:fadeUp 0.3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:24px}
+.page-title{font-family:var(--font-display);font-size:26px;font-weight:700;letter-spacing:-0.5px;margin-bottom:4px}
+.page-subtitle{font-size:13px;color:var(--text-secondary)}
+.page-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-md);font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s;border:none;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#0EA5E9);color:#fff;box-shadow:0 0 20px rgba(56,189,248,0.2)}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 4px 20px rgba(56,189,248,0.3)}
+.btn-ai{background:linear-gradient(135deg,var(--ai),var(--accent));color:#fff;box-shadow:0 0 20px var(--ai-glow)}
+.btn-ai:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-ghost{background:transparent;border:1px solid var(--border-default);color:var(--text-secondary)}
+.btn-ghost:hover{background:var(--bg-hover);color:var(--text-primary);border-color:var(--border-strong)}
+.btn-danger{background:transparent;border:1px solid rgba(248,113,113,0.2);color:var(--error)}
+.btn-danger:hover{background:rgba(248,113,113,0.1)}
+.btn-sm{padding:5px 12px;font-size:12px}
+
+/* CARDS */
+.card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:20px;transition:all 0.2s}
+.card:hover{border-color:var(--border-strong);box-shadow:0 4px 24px rgba(0,0,0,0.3)}
+.card-glow:hover{border-color:var(--border-accent);box-shadow:0 0 24px var(--accent-glow),0 4px 24px rgba(0,0,0,0.3)}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:20px;transition:all 0.25s;animation:fadeUp 0.4s ease both}
+.kpi-card:nth-child(1){animation-delay:0.05s}
+.kpi-card:nth-child(2){animation-delay:0.1s}
+.kpi-card:nth-child(3){animation-delay:0.15s}
+.kpi-card:nth-child(4){animation-delay:0.2s}
+.kpi-card:hover{border-color:var(--border-accent);box-shadow:0 0 24px var(--accent-glow),0 8px 32px rgba(0,0,0,0.4);transform:translateY(-2px)}
+.kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:14px}
+.kpi-icon.cyan{background:rgba(56,189,248,0.1);color:var(--accent)}
+.kpi-icon.green{background:rgba(52,211,153,0.1);color:var(--success)}
+.kpi-icon.blue{background:rgba(96,165,250,0.1);color:#60A5FA}
+.kpi-icon.purple{background:rgba(167,139,250,0.1);color:var(--ai)}
+.kpi-trend{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:500;margin-bottom:6px}
+.kpi-trend.up{color:var(--success)}
+.kpi-value{font-family:var(--font-mono);font-size:28px;font-weight:500;color:var(--text-primary);letter-spacing:-1px;margin-bottom:4px}
+.kpi-label{font-size:11px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:1px;font-weight:500}
+
+/* DASHBOARD GRID */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:16px;margin-bottom:16px}
+.dash-grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
+
+/* PIPELINE BARS */
+.pipeline-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.pipeline-stage{font-size:12px;color:var(--text-secondary);width:90px;flex-shrink:0}
+.pipeline-bar-wrap{flex:1;background:var(--bg-elevated);border-radius:4px;height:6px;overflow:hidden}
+.pipeline-bar{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--ai));animation:growBar 1s ease both}
+.pipeline-bar.b2{animation-delay:0.1s}
+.pipeline-bar.b3{animation-delay:0.2s}
+.pipeline-bar.b4{animation-delay:0.3s}
+.pipeline-bar.b5{animation-delay:0.4s}
+@keyframes growBar{from{width:0!important}to{}}
+.pipeline-amount{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);width:70px;text-align:right;flex-shrink:0}
+.pipeline-count{font-size:10px;color:var(--text-tertiary);width:20px;text-align:right;flex-shrink:0}
+
+/* TOP DEALS */
+.top-deal{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+.top-deal:last-child{border-bottom:none}
+.deal-rank{font-family:var(--font-mono);font-size:11px;color:var(--text-tertiary);width:20px}
+.deal-info{flex:1}
+.deal-name-sm{font-size:13px;font-weight:500}
+.deal-stage-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 7px;border-radius:10px;margin-top:2px;font-weight:500}
+.badge-demo{background:rgba(96,165,250,0.1);color:#60A5FA}
+.badge-nego{background:rgba(251,191,36,0.1);color:var(--warning)}
+.badge-prop{background:rgba(167,139,250,0.1);color:var(--ai)}
+.badge-qual{background:rgba(56,189,248,0.1);color:var(--accent)}
+.badge-won{background:rgba(52,211,153,0.1);color:var(--success)}
+.badge-lead{background:rgba(74,85,120,0.2);color:var(--text-secondary)}
+.deal-amount{font-family:var(--font-mono);font-size:13px;color:var(--accent);font-weight:500}
+
+/* ACTIVITY FEED */
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-subtle)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px}
+.activity-dot.note{background:rgba(74,85,120,0.2);color:var(--text-secondary)}
+.activity-dot.sms{background:rgba(52,211,153,0.1);color:var(--success)}
+.activity-dot.email{background:rgba(56,189,248,0.1);color:var(--accent)}
+.activity-dot.contract{background:rgba(167,139,250,0.1);color:var(--ai)}
+.activity-body{flex:1}
+.activity-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.activity-desc{font-size:12px;color:var(--text-secondary)}
+.activity-time{font-family:var(--font-mono);font-size:11px;color:var(--text-tertiary);flex-shrink:0}
+
+/* AI STRIP */
+.ai-strip{background:linear-gradient(135deg,rgba(167,139,250,0.08),rgba(56,189,248,0.05));border:1px solid rgba(167,139,250,0.2);border-radius:var(--r-lg);padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:16px;animation:fadeUp 0.4s 0.35s ease both}
+.ai-strip-dot{width:8px;height:8px;border-radius:50%;background:var(--ai);animation:pulse-ai 2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse-ai{0%,100%{box-shadow:0 0 0 0 rgba(167,139,250,0.5)}50%{box-shadow:0 0 0 6px rgba(167,139,250,0)}}
+.ai-strip-text{flex:1;font-size:13px;color:var(--text-secondary)}
+.ai-strip-text strong{color:var(--text-primary)}
+
+/* SECTION HEADER */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:1.5px;color:var(--text-tertiary);text-transform:uppercase}
+.section-link{font-size:12px;color:var(--accent);cursor:pointer;transition:opacity 0.15s}
+.section-link:hover{opacity:0.7}
+
+/* CONTACTS TABLE */
+.table-wrap{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-lg);overflow:hidden}
+.table-search{padding:12px 16px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:12px}
+.table-search input{flex:1;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--r-md);padding:7px 14px 7px 32px;color:var(--text-primary);font-size:13px;outline:none;transition:all 0.2s}
+.table-search input:focus{border-color:var(--border-accent)}
+.filter-chips{display:flex;gap:6px}
+.chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border-default);color:var(--text-tertiary);transition:all 0.15s;background:transparent}
+.chip.active{background:rgba(56,189,248,0.1);border-color:rgba(56,189,248,0.3);color:var(--accent)}
+.chip:hover:not(.active){background:var(--bg-hover);color:var(--text-secondary)}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 16px;text-align:left;font-size:10px;font-weight:600;letter-spacing:1px;color:var(--text-tertiary);text-transform:uppercase;background:var(--bg-elevated);border-bottom:1px solid var(--border-subtle)}
+tbody tr{border-bottom:1px solid var(--border-subtle);transition:all 0.12s;cursor:pointer}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg-hover)}
+tbody tr:hover .row-actions{opacity:1}
+tbody td{padding:12px 16px;font-size:13px}
+.contact-cell{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;font-family:var(--font-display)}
+.consent-badges{display:flex;gap:4px}
+.consent-pill{padding:3px 8px;border-radius:10px;font-size:10px;font-weight:600;font-family:var(--font-mono)}
+.consent-pill.granted{background:rgba(52,211,153,0.1);color:var(--success);border:1px solid rgba(52,211,153,0.2)}
+.consent-pill.revoked{background:var(--bg-elevated);color:var(--text-tertiary);border:1px solid var(--border-default)}
+.text-mono{font-family:var(--font-mono);font-size:12px;color:var(--text-tertiary)}
+.text-secondary{color:var(--text-secondary)}
+.row-actions{opacity:0;display:flex;gap:4px;transition:opacity 0.15s}
+.row-action-btn{padding:4px 8px;border-radius:6px;font-size:11px;border:1px solid var(--border-default);background:var(--bg-elevated);color:var(--text-secondary);cursor:pointer;transition:all 0.12s}
+.row-action-btn:hover{background:var(--bg-active);color:var(--text-primary)}
+.row-action-btn.ai{border-color:rgba(167,139,250,0.3);color:var(--ai)}
+
+/* ACCOUNTS GRID */
+.accounts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.account-card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:20px;cursor:pointer;transition:all 0.2s;animation:fadeUp 0.4s ease both}
+.account-card:hover{border-color:var(--border-accent);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 20px var(--accent-glow)}
+.account-avatar{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;margin-bottom:12px;font-family:var(--font-display)}
+.account-name{font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:2px}
+.account-domain{font-size:12px;color:var(--text-tertiary);margin-bottom:10px}
+.account-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tag{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:500;background:var(--bg-elevated);border:1px solid var(--border-default);color:var(--text-secondary)}
+.account-revenue{font-family:var(--font-mono);font-size:20px;font-weight:500;color:var(--accent);margin-bottom:4px}
+.account-meta{font-size:11px;color:var(--text-tertiary);display:flex;align-items:center;gap:4px}
+
+/* KANBAN */
+.kanban-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.kanban-meta{font-size:13px;color:var(--text-secondary)}
+.kanban-meta span{font-family:var(--font-mono);color:var(--accent)}
+.kanban-board{display:flex;gap:14px;overflow-x:auto;padding-bottom:16px;min-height:calc(100vh - 220px)}
+.kanban-board::-webkit-scrollbar{height:4px}
+.kanban-board::-webkit-scrollbar-track{background:var(--bg-elevated)}
+.kanban-board::-webkit-scrollbar-thumb{background:var(--bg-active);border-radius:2px}
+.kanban-col{min-width:230px;max-width:230px;display:flex;flex-direction:column;gap:8px}
+.col-header{padding:10px 12px;background:var(--bg-surface);border-radius:var(--r-md);border:1px solid var(--border-subtle);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.col-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.col-name{font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;flex:1}
+.col-count{font-family:var(--font-mono);font-size:11px;color:var(--text-tertiary)}
+.col-amount{font-family:var(--font-mono);font-size:10px;color:var(--text-tertiary);margin-top:2px}
+.deal-card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-md);padding:14px;cursor:grab;transition:all 0.2s;border-left-width:3px;animation:fadeUp 0.3s ease both}
+.deal-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.deal-card-name{font-size:13px;font-weight:600;margin-bottom:8px;line-height:1.3}
+.deal-entity{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-secondary);margin-bottom:8px}
+.deal-entity svg{color:var(--text-tertiary)}
+.deal-card-amount{font-family:var(--font-mono);font-size:15px;font-weight:500;color:var(--accent);margin-bottom:6px}
+.deal-card-bottom{display:flex;align-items:center;justify-content:space-between}
+.prob-badge{font-size:10px;font-weight:600;font-family:var(--font-mono);padding:2px 7px;border-radius:10px}
+.prob-high{background:rgba(52,211,153,0.1);color:var(--success)}
+.prob-mid{background:rgba(251,191,36,0.1);color:var(--warning)}
+.prob-low{background:rgba(74,85,120,0.15);color:var(--text-tertiary)}
+.deal-date{font-size:10px;color:var(--text-tertiary);font-family:var(--font-mono)}
+.stalled{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);padding:3px 6px;border-radius:6px;font-size:10px;color:var(--warning)}
+
+/* APPROVALS */
+.approvals-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;height:calc(100vh - 140px)}
+.approvals-list{display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.approval-card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-md);padding:14px;cursor:pointer;transition:all 0.15s;position:relative}
+.approval-card.active{background:var(--bg-active);border-color:var(--border-accent);box-shadow:0 0 16px var(--accent-glow)}
+.approval-card:hover:not(.active){background:var(--bg-hover);border-color:var(--border-strong)}
+.approval-unread{position:absolute;top:14px;right:14px;width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse-ai 2s infinite}
+.approval-type-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;font-family:var(--font-mono)}
+.type-email{background:rgba(56,189,248,0.1);color:var(--accent);border:1px solid rgba(56,189,248,0.2)}
+.type-sms{background:rgba(52,211,153,0.1);color:var(--success);border:1px solid rgba(52,211,153,0.2)}
+.approval-contact{font-size:13px;font-weight:600;margin-bottom:4px}
+.approval-preview{font-size:12px;color:var(--text-secondary);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.approval-expiry{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:11px;font-family:var(--font-mono)}
+.expiry-warn{color:var(--warning)}
+.expiry-ok{color:var(--text-tertiary)}
+
+/* APPROVAL DETAIL */
+.approval-detail{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-lg);display:flex;flex-direction:column;overflow:hidden}
+.detail-header{padding:18px 20px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:14px}
+.detail-avatar{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;font-family:var(--font-display);flex-shrink:0}
+.detail-contact-name{font-size:15px;font-weight:600;font-family:var(--font-display)}
+.detail-meta{font-size:12px;color:var(--text-secondary)}
+.detail-deal-badge{margin-left:auto;display:flex;align-items:center;gap:6px;padding:6px 12px;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--r-md)}
+.detail-deal-name{font-size:12px;font-weight:500}
+.detail-agent{font-size:11px;color:var(--ai);display:flex;align-items:center;gap:4px}
+.detail-body{flex:1;overflow-y:auto;padding:20px}
+.email-frame{background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--r-md);overflow:hidden;margin-bottom:16px}
+.email-subject{padding:12px 16px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:8px}
+.email-subject-label{font-size:11px;color:var(--text-tertiary);font-weight:500;width:50px;flex-shrink:0}
+.email-subject-val{font-size:13px;font-weight:500;flex:1}
+.email-body{padding:16px;font-size:13px;color:var(--text-secondary);line-height:1.7;min-height:140px}
+.email-body p{margin-bottom:10px}
+.edit-hint{font-size:11px;color:var(--text-tertiary);display:flex;align-items:center;gap:4px;margin-bottom:16px}
+.compliance-section{margin-bottom:16px}
+.compliance-title{font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px;margin-bottom:10px;font-family:var(--font-display)}
+.compliance-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--r-sm);margin-bottom:4px;animation:fadeUp 0.3s ease both}
+.compliance-row:nth-child(1){animation-delay:0.05s}
+.compliance-row:nth-child(2){animation-delay:0.1s}
+.compliance-row:nth-child(3){animation-delay:0.15s}
+.compliance-row:nth-child(4){animation-delay:0.2s}
+.compliance-row:nth-child(5){animation-delay:0.25s}
+.comp-pass{background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.1)}
+.comp-warn{background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.15)}
+.comp-fail{background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.15)}
+.comp-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.comp-icon.pass{background:rgba(52,211,153,0.15);color:var(--success)}
+.comp-icon.warn{background:rgba(251,191,36,0.15);color:var(--warning)}
+.comp-icon.fail{background:rgba(248,113,113,0.15);color:var(--error)}
+.comp-name{flex:1;font-size:12px;font-weight:500}
+.comp-status{font-size:11px;font-weight:600;font-family:var(--font-mono)}
+.comp-status.pass{color:var(--success)}
+.comp-status.warn{color:var(--warning)}
+.comp-status.fail{color:var(--error)}
+.reasoning-toggle{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--r-md);cursor:pointer;margin-bottom:8px;font-size:12px;color:var(--text-secondary);transition:all 0.15s}
+.reasoning-toggle:hover{background:var(--bg-hover);color:var(--text-primary)}
+.reasoning-body{background:var(--bg-base);border:1px solid var(--border-subtle);border-radius:var(--r-md);padding:14px;font-family:var(--font-mono);font-size:11px;color:var(--text-secondary);line-height:1.7;display:none}
+.reasoning-body.open{display:block;animation:fadeUp 0.2s ease}
+.detail-actions{padding:16px 20px;border-top:1px solid var(--border-subtle);display:flex;align-items:center;gap:8px;background:var(--bg-elevated)}
+.expiry-timer{margin-left:auto;font-family:var(--font-mono);font-size:12px;color:var(--warning);display:flex;align-items:center;gap:4px}
+
+/* AI COMMAND */
+.missions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.mission-card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:22px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.mission-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,var(--ai-glow),transparent 60%);opacity:0;transition:opacity 0.3s}
+.mission-card:hover::before{opacity:1}
+.mission-card:hover{border-color:rgba(167,139,250,0.3);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.mission-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;position:relative;z-index:1}
+.mission-icon.email-ic{background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.2)}
+.mission-icon.qualify-ic{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)}
+.mission-icon.deal-ic{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2)}
+.mission-icon.research-ic{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2)}
+.mission-icon.nurture-ic{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2)}
+.mission-title{font-family:var(--font-display);font-size:15px;font-weight:700;margin-bottom:6px;position:relative;z-index:1}
+.mission-desc{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px;position:relative;z-index:1}
+.mission-cta{font-size:12px;color:var(--ai);display:flex;align-items:center;gap:4px;transition:gap 0.2s;position:relative;z-index:1}
+.mission-card:hover .mission-cta{gap:8px}
+
+/* ACTIVE RUNS */
+.run-card{background:var(--bg-card);border:1px solid var(--border-default);border-radius:var(--r-lg);padding:16px;margin-bottom:10px}
+.run-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.run-status-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse-green 1.5s infinite;flex-shrink:0}
+.run-agent{font-size:13px;font-weight:600;font-family:var(--font-display)}
+.run-goal{font-size:12px;color:var(--text-secondary);flex:1}
+.run-cost{font-family:var(--font-mono);font-size:12px;color:var(--warning)}
+.run-progress-label{display:flex;justify-content:space-between;margin-bottom:6px}
+.run-step{font-size:11px;color:var(--text-secondary)}
+.run-pct{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+.run-progress-bar{height:4px;background:var(--bg-elevated);border-radius:2px;overflow:hidden}
+.run-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--ai));border-radius:2px;transition:width 1s ease}
+
+/* PRODUCTS */
+.products-table .table-wrap{margin-top:0}
+
+/* QUICK INSIGHTS */
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.insight-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border-subtle);font-size:12px}
+.insight-row:last-child{border-bottom:none}
+.insight-label{color:var(--text-secondary)}
+.insight-val{font-family:var(--font-mono);font-weight:500}
+
+/* NAV TABS */
+.page-tabs{display:flex;gap:4px;background:var(--bg-elevated);padding:4px;border-radius:var(--r-md);width:fit-content;margin-bottom:20px}
+.tab-btn{padding:6px 16px;border-radius:var(--r-sm);font-size:12px;font-weight:500;cursor:pointer;transition:all 0.15s;border:none;background:transparent;color:var(--text-tertiary)}
+.tab-btn.active{background:var(--bg-card);color:var(--text-primary);box-shadow:0 1px 3px rgba(0,0,0,0.3)}
+.tab-btn:hover:not(.active){color:var(--text-secondary)}
+
+/* NOTIFICATION TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-elevated);border:1px solid rgba(52,211,153,0.3);border-radius:var(--r-lg);padding:14px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.5),0 0 20px rgba(52,211,153,0.1);animation:slideUp 0.3s ease;z-index:200;font-size:13px;max-width:300px}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.toast-icon{width:28px;height:28px;border-radius:8px;background:rgba(52,211,153,0.1);display:flex;align-items:center;justify-content:center;color:var(--success);flex-shrink:0}
+.toast-title{font-weight:600;margin-bottom:2px}
+.toast-body{font-size:12px;color:var(--text-secondary)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg-active);border-radius:2px}
+
+/* AVATAR COLORS */
+.av-0{background:linear-gradient(135deg,#4F46E5,#7C3AED)}
+.av-1{background:linear-gradient(135deg,#0EA5E9,#0284C7)}
+.av-2{background:linear-gradient(135deg,#10B981,#059669)}
+.av-3{background:linear-gradient(135deg,#F59E0B,#D97706)}
+.av-4{background:linear-gradient(135deg,#EF4444,#DC2626)}
+.av-5{background:linear-gradient(135deg,#EC4899,#DB2777)}
+.av-6{background:linear-gradient(135deg,#8B5CF6,#7C3AED)}
+.av-7{background:linear-gradient(135deg,#06B6D4,#0891B2)}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">Acufy</div>
+      <span class="logo-sub">CRM Platform</span>
+    </div>
+  </div>
+  <div class="search-bar">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" placeholder="Search anything...">
+    <span class="search-kbd">⌘K</span>
+  </div>
+  <div class="topbar-right">
+    <div class="ai-badge"><span class="ai-dot"></span> AI ready</div>
+    <button class="icon-btn" title="Theme">🌙</button>
+    <button class="icon-btn" title="Notifications" onclick="showToast()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="notif-badge">3</span>
+    </button>
+    <div class="user-btn">
+      <div class="user-avatar">AU</div>
+      <div class="user-info">
+        <div class="user-name">Admin User</div>
+        <div class="user-role">Admin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Main</div>
+      <div class="nav-item active" onclick="showPage('dashboard',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('contacts',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Contacts
+      </div>
+      <div class="nav-item" onclick="showPage('accounts',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Accounts
+      </div>
+      <div class="nav-item" onclick="showPage('deals',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Deals
+      </div>
+      <div class="nav-item" onclick="showPage('products',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Products
+      </div>
+      <div class="nav-item" onclick="showPage('tasks',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Tasks
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">AI Features</div>
+      <div class="nav-item ai-item" onclick="showPage('aicommand',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        AI Command
+      </div>
+      <div class="nav-item ai-item" onclick="showPage('approvals',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Approvals
+        <span class="nav-badge">3</span>
+      </div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="collapse-btn" onclick="toggleSidebar()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Collapse
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header-row">
+        <div>
+          <div class="page-title">Sales Dashboard</div>
+          <div class="page-subtitle">Welcome back! Here's your pipeline at a glance.</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:12px;color:var(--text-tertiary)">
+          <span>8 deals tracked</span>
+        </div>
+      </div>
+
+      <!-- AI STRIP -->
+      <div class="ai-strip">
+        <div class="ai-strip-dot"></div>
+        <div class="ai-strip-text"><strong>3 AI drafts</strong> are awaiting your review — NurturerAgent drafted outreach for Meridian CRM Migration</div>
+        <button class="btn btn-ai btn-sm" onclick="showPage('approvals',document.querySelector('[onclick*=approvals]'))">Review Now →</button>
+      </div>
+
+      <!-- KPI CARDS -->
+      <div class="kpi-grid">
+        <div class="kpi-card card-glow">
+          <div class="kpi-icon cyan">$</div>
+          <div class="kpi-trend up">↑ +12.5% <span style="color:var(--text-tertiary)">vs last month</span></div>
+          <div class="kpi-value">$592,084</div>
+          <div class="kpi-label">Total Pipeline</div>
+        </div>
+        <div class="kpi-card card-glow">
+          <div class="kpi-icon green">✓</div>
+          <div class="kpi-trend up">↑ +8.2%</div>
+          <div class="kpi-value">$18,000</div>
+          <div class="kpi-label">Won Revenue</div>
+        </div>
+        <div class="kpi-card card-glow">
+          <div class="kpi-icon blue">◎</div>
+          <div class="kpi-trend up">41% avg prob</div>
+          <div class="kpi-value">7</div>
+          <div class="kpi-label">Active Deals</div>
+        </div>
+        <div class="kpi-card card-glow">
+          <div class="kpi-icon purple">👤</div>
+          <div class="kpi-trend up">↑ 5 accounts</div>
+          <div class="kpi-value">20</div>
+          <div class="kpi-label">Total Contacts</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <!-- PIPELINE -->
+        <div class="card" style="animation:fadeUp 0.4s 0.25s ease both">
+          <div class="section-hdr">
+            <span class="section-title">Pipeline Breakdown</span>
+            <span class="section-link">8 deals</span>
+          </div>
+          <div class="pipeline-row"><span class="pipeline-stage">Proposal</span><div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:52%"></div></div><span class="pipeline-amount">$97,788</span><span class="pipeline-count">2</span></div>
+          <div class="pipeline-row"><span class="pipeline-stage">Negotiation</span><div class="pipeline-bar-wrap"><div class="pipeline-bar b2" style="width:80%"></div></div><span class="pipeline-amount">$150,000</span><span class="pipeline-count">1</span></div>
+          <div class="pipeline-row"><span class="pipeline-stage">Demo/Meeting</span><div class="pipeline-bar-wrap"><div class="pipeline-bar b3" style="width:100%"></div></div><span class="pipeline-amount">$280,000</span><span class="pipeline-count">1</span></div>
+          <div class="pipeline-row"><span class="pipeline-stage">Qualified</span><div class="pipeline-bar-wrap"><div class="pipeline-bar b4" style="width:25%"></div></div><span class="pipeline-amount">$45,348</span><span class="pipeline-count">2</span></div>
+          <div class="pipeline-row"><span class="pipeline-stage">Won</span><div class="pipeline-bar-wrap"><div class="pipeline-bar b5" style="width:10%;background:linear-gradient(90deg,var(--success),#059669)"></div></div><span class="pipeline-amount">$18,000</span><span class="pipeline-count">1</span></div>
+          <div class="pipeline-row"><span class="pipeline-stage">Lead</span><div class="pipeline-bar-wrap"><div class="pipeline-bar" style="width:1%;background:var(--text-tertiary)"></div></div><span class="pipeline-amount">$948</span><span class="pipeline-count">1</span></div>
+        </div>
+
+        <!-- TOP DEALS -->
+        <div class="card" style="animation:fadeUp 0.4s 0.3s ease both">
+          <div class="section-hdr">
+            <span class="section-title">Top Deals</span>
+            <span class="section-link">View all →</span>
+          </div>
+          <div class="top-deal">
+            <div class="deal-rank">#1</div>
+            <div class="deal-info">
+              <div class="deal-name-sm">Meridian CRM Migration</div>
+              <span class="deal-stage-badge badge-demo">Demo/Meeting</span>
+            </div>
+            <div class="deal-amount">$280,000</div>
+          </div>
+          <div class="top-deal">
+            <div class="deal-rank">#2</div>
+            <div class="deal-info">
+              <div class="deal-name-sm">GreenLeaf Digital Transform.</div>
+              <span class="deal-stage-badge badge-nego">Negotiation 75%</span>
+            </div>
+            <div class="deal-amount">$150,000</div>
+          </div>
+          <div class="top-deal">
+            <div class="deal-rank">#3</div>
+            <div class="deal-info">
+              <div class="deal-name-sm">TechVista Enterprise License</div>
+              <span class="deal-stage-badge badge-prop">Proposal 60%</span>
+            </div>
+            <div class="deal-amount">$95,400</div>
+          </div>
+          <div class="top-deal">
+            <div class="deal-rank">#4</div>
+            <div class="deal-info">
+              <div class="deal-name-sm">Atlas Financial Suite</div>
+              <span class="deal-stage-badge badge-qual">Qualified 25%</span>
+            </div>
+            <div class="deal-amount">$45,000</div>
+          </div>
+        </div>
+
+        <!-- QUICK INSIGHTS + AI WIDGET -->
+        <div style="display:flex;flex-direction:column;gap:14px;animation:fadeUp 0.4s 0.35s ease both">
+          <div class="card">
+            <div class="section-hdr"><span class="section-title">Quick Insights</span></div>
+            <div class="insight-row"><span class="insight-label">Win Rate</span><span class="insight-val" style="color:var(--success)">13%</span></div>
+            <div class="insight-row"><span class="insight-label">Avg Deal Size</span><span class="insight-val">$74,011</span></div>
+            <div class="insight-row"><span class="insight-label">Avg Probability</span><span class="insight-val">41%</span></div>
+            <div class="insight-row"><span class="insight-label">Contacts / Account</span><span class="insight-val">4.0</span></div>
+          </div>
+          <!-- AI COMMAND WIDGET -->
+          <div style="background:linear-gradient(135deg,rgba(167,139,250,0.1),rgba(56,189,248,0.05));border:1px solid rgba(167,139,250,0.25);border-radius:var(--r-lg);padding:18px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="font-size:18px;animation:spin 4s linear infinite;display:inline-block">✦</span>
+              <span style="font-family:var(--font-display);font-size:13px;font-weight:700">AI Command Center</span>
+            </div>
+            <p style="font-size:12px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px">Launch AI agents to qualify leads, draft emails, or progress deals automatically.</p>
+            <button class="btn btn-ai" style="width:100%;justify-content:center" onclick="showPage('aicommand',document.querySelector('[onclick*=aicommand]'))">✦ Open AI Command</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="card" style="animation:fadeUp 0.4s 0.4s ease both">
+        <div class="section-hdr">
+          <span class="section-title">Recent Activity</span>
+          <span class="section-link">15 total</span>
+        </div>
+        <div class="activity-item"><div class="activity-dot note">📝</div><div class="activity-body"><div class="activity-title">Post-Sale Note</div><div class="activity-desc">Great customer — potential case study candidate.</div></div><div class="activity-time">14h ago</div></div>
+        <div class="activity-item"><div class="activity-dot sms">💬</div><div class="activity-body"><div class="activity-title">Follow Up</div><div class="activity-desc">Followed up on proposal via SMS.</div></div><div class="activity-time">1d ago</div></div>
+        <div class="activity-item"><div class="activity-dot contract">⚡</div><div class="activity-body"><div class="activity-title">Contract Signed</div><div class="activity-desc">Olivia signed the annual contract. Onboarding starts next week.</div></div><div class="activity-time">1d ago</div></div>
+        <div class="activity-item"><div class="activity-dot email">✉️</div><div class="activity-body"><div class="activity-title">Welcome Email</div><div class="activity-desc">Sent welcome email to Alex after form submission.</div></div><div class="activity-time">3d ago</div></div>
+      </div>
+    </div>
+
+    <!-- CONTACTS PAGE -->
+    <div class="page" id="page-contacts">
+      <div class="page-header-row">
+        <div>
+          <div class="page-title">Contacts</div>
+          <div class="page-subtitle">20 total contacts</div>
+        </div>
+        <button class="btn btn-primary">+ Add Contact</button>
+      </div>
+      <div class="table-wrap">
+        <div class="table-search">
+          <div style="position:relative;flex:1;max-width:320px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-tertiary)"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" placeholder="Search contacts..." style="padding-left:32px">
+          </div>
+          <div class="filter-chips">
+            <div class="chip active">All</div>
+            <div class="chip">SMS Consent</div>
+            <div class="chip">Email Only</div>
+            <div class="chip">No Consent</div>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Contact</th><th>Email</th><th>Phone</th><th>Consent</th><th>Created</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><div class="contact-cell"><div class="avatar av-0">SC</div><span style="font-weight:500">Sarah Chen</span></div></td><td class="text-secondary">sarah.chen@techvista.io</td><td class="text-mono">+15551001001</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill granted">SMS ✓</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+            <tr><td><div class="contact-cell"><div class="avatar av-1">MR</div><span style="font-weight:500">Michael Rodriguez</span></div></td><td class="text-secondary">m.rodriguez@techvista.io</td><td class="text-mono">+15551001002</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill granted">SMS ✓</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+            <tr><td><div class="contact-cell"><div class="avatar av-2">EW</div><span style="font-weight:500">Emily Watson</span></div></td><td class="text-secondary">ewatson@techvista.io</td><td class="text-mono">—</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill revoked">SMS ✗</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+            <tr><td><div class="contact-cell"><div class="avatar av-3">JF</div><span style="font-weight:500">James Foster</span></div></td><td class="text-secondary">jfoster@greenleaf-mfg.com</td><td class="text-mono">+15551002001</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill granted">SMS ✓</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+            <tr><td><div class="contact-cell"><div class="avatar av-4">LP</div><span style="font-weight:500">Linda Park</span></div></td><td class="text-secondary">lpark@greenleaf-mfg.com</td><td class="text-mono">+15551002002</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill revoked">SMS ✗</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+            <tr><td><div class="contact-cell"><div class="avatar av-5">RK</div><span style="font-weight:500">Robert Kim</span></div></td><td class="text-secondary">rkim@meridianhealth.com</td><td class="text-mono">+15551003001</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill granted">SMS ✓</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+            <tr><td><div class="contact-cell"><div class="avatar av-6">JA</div><span style="font-weight:500">Jennifer Adams</span></div></td><td class="text-secondary">jadams@meridianhealth.com</td><td class="text-mono">+15551003002</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill granted">SMS ✓</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+            <tr><td><div class="contact-cell"><div class="avatar av-7">DT</div><span style="font-weight:500">David Thompson</span></div></td><td class="text-secondary">dthompson@meridianhealth.com</td><td class="text-mono">—</td><td><div class="consent-badges"><span class="consent-pill granted">Email ✓</span><span class="consent-pill revoked">SMS ✗</span></div></td><td class="text-mono">Apr 21, 2026</td><td><div class="row-actions"><button class="row-action-btn">View</button><button class="row-action-btn ai">✦ AI</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS PAGE -->
+    <div class="page" id="page-accounts">
+      <div class="page-header-row">
+        <div>
+          <div class="page-title">Accounts</div>
+          <div class="page-subtitle">5 companies</div>
+        </div>
+        <button class="btn btn-primary">+ Add Account</button>
+      </div>
+      <div class="accounts-grid">
+        <div class="account-card" style="animation-delay:0.05s">
+          <div class="account-avatar av-0">TS</div>
+          <div class="account-name">TechVista Solutions</div>
+          <div class="account-domain">🌐 techvista.io</div>
+          <div class="account-tags"><span class="tag">Technology</span><span class="tag">51-200</span></div>
+          <div class="account-revenue">$12,000,000</div>
+          <div class="account-meta">Added Apr 21, 2026</div>
+        </div>
+        <div class="account-card" style="animation-delay:0.1s">
+          <div class="account-avatar av-2">GM</div>
+          <div class="account-name">GreenLeaf Manufacturing</div>
+          <div class="account-domain">🌐 greenleaf-mfg.com</div>
+          <div class="account-tags"><span class="tag">Manufacturing</span><span class="tag">201-500</span></div>
+          <div class="account-revenue">$45,000,000</div>
+          <div class="account-meta">Added Apr 21, 2026</div>
+        </div>
+        <div class="account-card" style="animation-delay:0.15s">
+          <div class="account-avatar av-5">MH</div>
+          <div class="account-name">Meridian Healthcare</div>
+          <div class="account-domain">🌐 meridianhealth.com</div>
+          <div class="account-tags"><span class="tag">Healthcare</span><span class="tag">501-1000</span></div>
+          <div class="account-revenue">$120,000,000</div>
+          <div class="account-meta">Added Apr 21, 2026</div>
+        </div>
+        <div class="account-card" style="animation-delay:0.2s">
+          <div class="account-avatar av-3">AF</div>
+          <div class="account-name">Atlas Financial Group</div>
+          <div class="account-domain">🌐 atlasfinancial.com</div>
+          <div class="account-tags"><span class="tag">Financial Services</span><span class="tag">201-500</span></div>
+          <div class="account-revenue">$80,000,000</div>
+          <div class="account-meta">Added Apr 21, 2026</div>
+        </div>
+        <div class="account-card" style="animation-delay:0.25s">
+          <div class="account-avatar av-6">NM</div>
+          <div class="account-name">NovaStar Media</div>
+          <div class="account-domain">🌐 novastarmedia.com</div>
+          <div class="account-tags"><span class="tag">Media & Entertainment</span><span class="tag">11-50</span></div>
+          <div class="account-revenue">$5,000,000</div>
+          <div class="account-meta">Added Apr 21, 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEALS KANBAN -->
+    <div class="page" id="page-deals">
+      <div class="kanban-header">
+        <div>
+          <div class="page-title">Deals Pipeline</div>
+          <div class="kanban-meta">8 deals · <span>$592,084</span> pipeline</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="page-tabs"><button class="tab-btn active">Kanban</button><button class="tab-btn">List</button></div>
+          <button class="btn btn-primary">+ New Deal</button>
+        </div>
+      </div>
+      <div class="kanban-board">
+        <!-- LEAD -->
+        <div class="kanban-col">
+          <div class="col-header"><div class="col-dot" style="background:var(--text-tertiary)"></div><div><div class="col-name">Lead</div><div class="col-amount">$948</div></div><div class="col-count">1</div></div>
+          <div class="deal-card" style="border-left-color:var(--text-tertiary);animation-delay:0.05s">
+            <div class="deal-card-name">Alex Johnson Pro Plan</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Alex Johnson (B2C)</div>
+            <div class="deal-card-amount">$948</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-low">10%</span><span class="deal-date">May 5, 2026</span></div>
+          </div>
+        </div>
+        <!-- QUALIFIED -->
+        <div class="kanban-col">
+          <div class="col-header"><div class="col-dot" style="background:var(--accent)"></div><div><div class="col-name" style="color:var(--accent)">Qualified</div><div class="col-amount">$45,348</div></div><div class="col-count">2</div></div>
+          <div class="deal-card" style="border-left-color:var(--accent);animation-delay:0.08s">
+            <div class="deal-card-name">Atlas Financial Suite</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Atlas Financial Group</div>
+            <div class="deal-card-amount">$45,000</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-low">25%</span><span class="deal-date">Jun 5, 2026</span></div>
+          </div>
+          <div class="deal-card" style="border-left-color:var(--accent);animation-delay:0.11s">
+            <div class="deal-card-name">Ryan Davis Starter</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Ryan Davis (B2C)</div>
+            <div class="deal-card-amount">$348</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-low">40%</span><span class="deal-date">Apr 28, 2026</span></div>
+          </div>
+        </div>
+        <!-- DEMO/MEETING -->
+        <div class="kanban-col">
+          <div class="col-header"><div class="col-dot" style="background:#60A5FA"></div><div><div class="col-name" style="color:#60A5FA">Demo/Meeting</div><div class="col-amount">$280,000</div></div><div class="col-count">1</div></div>
+          <div class="deal-card" style="border-left-color:#60A5FA;animation-delay:0.14s">
+            <div class="deal-card-name">Meridian CRM Migration</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> Meridian Healthcare</div>
+            <div class="deal-card-amount">$280,000</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-low">30%</span><span class="deal-date">Jun 20, 2026</span></div>
+            <div style="margin-top:8px"><span class="stalled">⚠ 14d in stage</span></div>
+          </div>
+        </div>
+        <!-- PROPOSAL -->
+        <div class="kanban-col">
+          <div class="col-header"><div class="col-dot" style="background:var(--ai)"></div><div><div class="col-name" style="color:var(--ai)">Proposal</div><div class="col-amount">$97,788</div></div><div class="col-count">2</div></div>
+          <div class="deal-card" style="border-left-color:var(--ai);animation-delay:0.17s">
+            <div class="deal-card-name">TechVista Enterprise License</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> TechVista Solutions</div>
+            <div class="deal-card-amount">$95,400</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-mid">60%</span><span class="deal-date">May 21, 2026</span></div>
+          </div>
+          <div class="deal-card" style="border-left-color:var(--ai);animation-delay:0.2s">
+            <div class="deal-card-name">Chris Williams Enterprise</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Chris Williams (B2C)</div>
+            <div class="deal-card-amount">$2,388</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-mid">50%</span><span class="deal-date">May 11, 2026</span></div>
+          </div>
+        </div>
+        <!-- NEGOTIATION -->
+        <div class="kanban-col">
+          <div class="col-header"><div class="col-dot" style="background:var(--warning)"></div><div><div class="col-name" style="color:var(--warning)">Negotiation</div><div class="col-amount">$150,000</div></div><div class="col-count">1</div></div>
+          <div class="deal-card" style="border-left-color:var(--warning);animation-delay:0.23s">
+            <div class="deal-card-name">GreenLeaf Digital Transform.</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> GreenLeaf Manufacturing</div>
+            <div class="deal-card-amount">$150,000</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-high">75%</span><span class="deal-date">May 6, 2026</span></div>
+          </div>
+        </div>
+        <!-- WON -->
+        <div class="kanban-col">
+          <div class="col-header"><div class="col-dot" style="background:var(--success)"></div><div><div class="col-name" style="color:var(--success)">Won</div><div class="col-amount">$18,000</div></div><div class="col-count">1</div></div>
+          <div class="deal-card" style="border-left-color:var(--success);animation-delay:0.26s">
+            <div class="deal-card-name">NovaStar Starter Package</div>
+            <div class="deal-entity"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> NovaStar Media</div>
+            <div class="deal-card-amount">$18,000</div>
+            <div class="deal-card-bottom"><span class="prob-badge prob-high">100%</span><span class="deal-date">Apr 15, 2026</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPROVALS PAGE -->
+    <div class="page" id="page-approvals">
+      <div class="page-header-row">
+        <div>
+          <div class="page-title">AI Approvals</div>
+          <div class="page-subtitle">3 drafts awaiting your review</div>
+        </div>
+      </div>
+      <div class="approvals-layout">
+        <!-- LIST -->
+        <div class="approvals-list">
+          <div class="approval-card active" onclick="selectApproval(this,0)">
+            <div class="approval-unread"></div>
+            <div class="approval-type-badge type-email">✉ Email</div>
+            <div class="approval-contact">Robert Kim · Meridian Healthcare</div>
+            <div class="approval-preview">Hi Robert, I wanted to follow up on our demo conversation last week. Based on your team's needs around data migration and CRM integration...</div>
+            <div class="approval-expiry"><span class="expiry-warn">⏱ 3h 42m remaining</span></div>
+          </div>
+          <div class="approval-card" onclick="selectApproval(this,1)">
+            <div class="approval-type-badge type-sms">💬 SMS</div>
+            <div class="approval-contact">Sarah Chen · TechVista Solutions</div>
+            <div class="approval-preview">Hi Sarah! Quick check-in on the enterprise proposal. Would you have 15 mins this week to discuss pricing?</div>
+            <div class="approval-expiry"><span class="expiry-ok">⏱ 18h remaining</span></div>
+          </div>
+          <div class="approval-card" onclick="selectApproval(this,2)">
+            <div class="approval-type-badge type-email">✉ Email</div>
+            <div class="approval-contact">James Foster · GreenLeaf Mfg</div>
+            <div class="approval-preview">Dear James, Following our negotiation discussion, I'm pleased to share the revised proposal with updated terms that reflect...</div>
+            <div class="approval-expiry"><span class="expiry-ok">⏱ 21h remaining</span></div>
+          </div>
+        </div>
+
+        <!-- DETAIL -->
+        <div class="approval-detail">
+          <div class="detail-header">
+            <div class="detail-avatar av-5">RK</div>
+            <div>
+              <div class="detail-contact-name">Robert Kim</div>
+              <div class="detail-meta">rkim@meridianhealth.com · Meridian Healthcare</div>
+            </div>
+            <div class="detail-deal-badge">
+              <div>
+                <div class="detail-deal-name">Meridian CRM Migration</div>
+                <div class="detail-agent">✦ Drafted by NurturerAgent</div>
+              </div>
+              <span class="deal-stage-badge badge-demo">Demo/Meeting</span>
+            </div>
+          </div>
+          <div class="detail-body">
+            <div class="email-frame">
+              <div class="email-subject">
+                <span class="email-subject-label">Subject</span>
+                <span class="email-subject-val">Following Up on Our Demo — Next Steps for Meridian</span>
+              </div>
+              <div class="email-body">
+                <p>Hi Robert,</p>
+                <p>I wanted to follow up on our demo conversation last week. Based on your team's needs around data migration and CRM integration, I believe we can have you fully onboarded within 6 weeks.</p>
+                <p>I've attached a tailored implementation timeline and would love to schedule a 30-minute call to walk through it together. Does Thursday or Friday this week work for you?</p>
+                <p>Looking forward to hearing from you.</p>
+                <p style="color:var(--text-tertiary);font-size:12px;margin-top:16px">— Acufy Sales Team | 123 Demo St, New York NY 10001<br><a href="#" style="color:var(--accent);font-size:11px">Unsubscribe</a></p>
+              </div>
+            </div>
+            <div class="edit-hint">✏ Click anywhere in the email body to edit before approving</div>
+
+            <!-- COMPLIANCE -->
+            <div class="compliance-section">
+              <div class="compliance-title">🛡 Compliance Check — Universal Pack v1.0</div>
+              <div class="compliance-row comp-pass"><div class="comp-icon pass">✓</div><div class="comp-name">TCPA Consent</div><div class="comp-status pass">Pass</div></div>
+              <div class="compliance-row comp-pass"><div class="comp-icon pass">✓</div><div class="comp-name">CAN-SPAM (unsubscribe + signature)</div><div class="comp-status pass">Pass</div></div>
+              <div class="compliance-row comp-pass"><div class="comp-icon pass">✓</div><div class="comp-name">GDPR / CCPA</div><div class="comp-status pass">Pass</div></div>
+              <div class="compliance-row comp-pass"><div class="comp-icon pass">✓</div><div class="comp-name">Anti-Discrimination</div><div class="comp-status pass">Pass</div></div>
+              <div class="compliance-row comp-warn"><div class="comp-icon warn">⚠</div><div class="comp-name">Honesty Check — "6 weeks onboarding" not in product catalog</div><div class="comp-status warn">Warn</div></div>
+              <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.15);border-radius:var(--r-md);padding:12px;margin-top:6px;font-size:12px;color:var(--text-secondary)">
+                <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer">
+                  <input type="checkbox" style="margin-top:2px;accent-color:var(--warning)">
+                  <span>I confirm the 6-week onboarding timeline is accurate and I take responsibility for this claim. This acknowledgment will be logged.</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- REASONING -->
+            <div class="reasoning-toggle" onclick="toggleReasoning(this)">
+              <span>💭</span> Why did the AI draft this?
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="reasoning-body">
+// NurturerAgent reasoning trace
+// Goal: follow_up after demo, deal stage = Demo/Meeting
+// Last activity: 14 days ago (demo call logged)
+// Contact score: 72/100 (BANT: Budget confirmed, Authority: Decision maker)
+// Trigger: DealOrchestratorAgent flagged deal as stalled (14d in stage)
+// Strategy: Re-engage with next-step CTA, reference demo context
+// Compliance pre-check: email consent ✓, unsubscribe injected ✓
+// Confidence: 0.84
+            </div>
+          </div>
+          <div class="detail-actions">
+            <button class="btn btn-danger btn-sm">✕ Reject</button>
+            <button class="btn btn-ghost btn-sm">↩ Send Back</button>
+            <div style="flex:1"></div>
+            <div class="expiry-timer">⏱ 3h 42m</div>
+            <button class="btn btn-primary" onclick="showToast()">✓ Approve & Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI COMMAND -->
+    <div class="page" id="page-aicommand">
+      <div class="page-header-row">
+        <div>
+          <div class="page-title">AI Command Center</div>
+          <div class="page-subtitle">Select a mission. AI agents will handle the rest.</div>
+        </div>
+      </div>
+      <div class="missions-grid">
+        <div class="mission-card">
+          <div class="mission-icon email-ic">✉</div>
+          <div class="mission-title">Outbound Campaign</div>
+          <div class="mission-desc">Draft personalized outreach emails to a contact list using deal context and persona.</div>
+          <div class="mission-cta">Select mission →</div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon qualify-ic">🎯</div>
+          <div class="mission-title">Lead Qualification</div>
+          <div class="mission-desc">Score and qualify inbound leads using BANT criteria and public source research.</div>
+          <div class="mission-cta">Select mission →</div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon deal-ic">📈</div>
+          <div class="mission-title">Deal Progression</div>
+          <div class="mission-desc">Advance a stalled deal through pipeline stages with AI-proposed next actions.</div>
+          <div class="mission-cta">Select mission →</div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon research-ic">🔍</div>
+          <div class="mission-title">Account Research</div>
+          <div class="mission-desc">Enrich accounts with public intelligence — news, funding, job signals, tech stack.</div>
+          <div class="mission-cta">Select mission →</div>
+        </div>
+        <div class="mission-card">
+          <div class="mission-icon nurture-ic">💌</div>
+          <div class="mission-title">Nurture Sequence</div>
+          <div class="mission-desc">Build a multi-touch follow-up sequence for contacts at any deal stage.</div>
+          <div class="mission-cta">Select mission →</div>
+        </div>
+      </div>
+
+      <div class="section-hdr"><span class="section-title">Active Agent Runs</span><span class="section-link">View all</span></div>
+      <div class="run-card">
+        <div class="run-header">
+          <div class="run-status-dot"></div>
+          <div class="run-agent">NurturerAgent</div>
+          <div class="run-goal">Drafting follow-up for Meridian CRM Migration</div>
+          <div class="run-cost">$0.041</div>
+          <button class="btn btn-ghost btn-sm">Cancel</button>
+        </div>
+        <div class="run-progress-label">
+          <span class="run-step">Step 3/5: Drafting email content</span>
+          <span class="run-pct">60%</span>
+        </div>
+        <div class="run-progress-bar"><div class="run-progress-fill" style="width:60%"></div></div>
+      </div>
+      <div class="run-card">
+        <div class="run-header">
+          <div class="run-status-dot" style="background:var(--success);animation-name:pulse-green"></div>
+          <div class="run-agent">ResearchAgent</div>
+          <div class="run-goal">Enriching GreenLeaf Manufacturing profile</div>
+          <div class="run-cost">$0.018</div>
+          <button class="btn btn-ghost btn-sm">Cancel</button>
+        </div>
+        <div class="run-progress-label">
+          <span class="run-step">Step 5/5: Storing findings to memory</span>
+          <span class="run-pct">92%</span>
+        </div>
+        <div class="run-progress-bar"><div class="run-progress-fill" style="width:92%"></div></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS PAGE -->
+    <div class="page" id="page-products">
+      <div class="page-header-row">
+        <div>
+          <div class="page-title">Products</div>
+          <div class="page-subtitle">10 products in catalog</div>
+        </div>
+        <button class="btn btn-primary">+ Add Product</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Product</th><th>SKU</th><th>Price</th><th>Created</th></tr></thead>
+          <tbody>
+            <tr><td><div><div style="font-weight:500">Acufy Enterprise Plan</div><div style="font-size:12px;color:var(--text-tertiary)">Full featured CRM with custom integrations</div></div></td><td class="text-mono">SKU-ENT-001</td><td><span style="font-family:var(--font-mono);color:var(--accent)">$199</span><span style="color:var(--text-tertiary);font-size:11px">/USD</span></td><td class="text-mono">Apr 21, 2026</td></tr>
+            <tr><td><div><div style="font-weight:500">Acufy Professional Plan</div><div style="font-size:12px;color:var(--text-tertiary)">Advanced CRM with AI features</div></div></td><td class="text-mono">SKU-PRO-001</td><td><span style="font-family:var(--font-mono);color:var(--accent)">$79</span><span style="color:var(--text-tertiary);font-size:11px">/USD</span></td><td class="text-mono">Apr 21, 2026</td></tr>
+            <tr><td><div><div style="font-weight:500">Acufy Starter Plan</div><div style="font-size:12px;color:var(--text-tertiary)">Basic CRM plan for small teams</div></div></td><td class="text-mono">SKU-START-001</td><td><span style="font-family:var(--font-mono);color:var(--accent)">$29</span><span style="color:var(--text-tertiary);font-size:11px">/USD</span></td><td class="text-mono">Apr 21, 2026</td></tr>
+            <tr><td><div><div style="font-weight:500">AI Add-on: Email Assistant</div><div style="font-size:12px;color:var(--text-tertiary)">AI email drafting and personalization</div></div></td><td class="text-mono">SKU-AI-002</td><td><span style="font-family:var(--font-mono);color:var(--accent)">$39</span><span style="color:var(--text-tertiary);font-size:11px">/USD</span></td><td class="text-mono">Apr 21, 2026</td></tr>
+            <tr><td><div><div style="font-weight:500">AI Add-on: Lead Scoring</div><div style="font-size:12px;color:var(--text-tertiary)">AI-powered lead scoring module</div></div></td><td class="text-mono">SKU-AI-001</td><td><span style="font-family:var(--font-mono);color:var(--accent)">$49</span><span style="color:var(--text-tertiary);font-size:11px">/USD</span></td><td class="text-mono">Apr 21, 2026</td></tr>
+            <tr><td><div><div style="font-weight:500">Custom Integration</div><div style="font-size:12px;color:var(--text-tertiary)">Custom API integration development</div></div></td><td class="text-mono">SKU-SVC-002</td><td><span style="font-family:var(--font-mono);color:var(--accent)">$5,000</span><span style="color:var(--text-tertiary);font-size:11px">/USD</span></td><td class="text-mono">Apr 21, 2026</td></tr>
+            <tr><td><div><div style="font-weight:500">Premium Support</div><div style="font-size:12px;color:var(--text-tertiary)">24/7 priority support with dedicated CSM</div></div></td><td class="text-mono">SKU-SUP-001</td><td><span style="font-family:var(--font-mono);color:var(--accent)">$149</span><span style="color:var(--text-tertiary);font-size:11px">/USD</span></td><td class="text-mono">Apr 21, 2026</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TASKS PAGE -->
+    <div class="page" id="page-tasks">
+      <div class="page-header-row">
+        <div><div class="page-title">Tasks</div><div class="page-subtitle">All tasks — 0 pending</div></div>
+        <button class="btn btn-primary">+ New Task</button>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;color:var(--text-tertiary)">
+        <div style="font-size:48px;margin-bottom:16px">✓</div>
+        <div style="font-family:var(--font-display);font-size:18px;font-weight:700;margin-bottom:6px;color:var(--text-secondary)">All clear</div>
+        <div style="font-size:13px">No pending tasks. AI agents will create tasks automatically when needed.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" style="display:none">
+  <div class="toast-icon">✓</div>
+  <div>
+    <div class="toast-title">Email Sent Successfully</div>
+    <div class="toast-body">Follow-up sent to Robert Kim via SendGrid</div>
+  </div>
+</div>
+
+<style>
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+</style>
+
+<script>
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+function toggleSidebar() {
+  const s = document.getElementById('sidebar');
+  const c = document.getElementById('content');
+  s.classList.toggle('collapsed');
+  c.style.marginLeft = s.classList.contains('collapsed') ? '64px' : '220px';
+}
+
+function toggleReasoning(el) {
+  const body = el.nextElementSibling;
+  body.classList.toggle('open');
+  el.querySelector('svg').style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+function selectApproval(el, idx) {
+  document.querySelectorAll('.approval-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  el.querySelector('.approval-unread') && (el.querySelector('.approval-unread').style.display = 'none');
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.style.display = 'flex';
+  setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translateY(20px)'; t.style.transition = 'all 0.3s'; setTimeout(() => { t.style.display = 'none'; t.style.opacity = ''; t.style.transform = ''; t.style.transition = ''; }, 300); }, 3000);
+}
+
+// Animate numbers on dashboard load
+function animateNumbers() {
+  const targets = [
+    { el: null, end: 592084, prefix: '$', decimals: 0 },
+  ];
+}
+
+// Filter chips
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    this.closest('.filter-chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Tab buttons
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.closest('.page-tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Search expand
+const searchInput = document.querySelector('.search-bar input');
+if (searchInput) {
+  searchInput.addEventListener('focus', function() {
+    this.parentElement.style.maxWidth = '560px';
+  });
+  searchInput.addEventListener('blur', function() {
+    this.parentElement.style.maxWidth = '480px';
+  });
+}
+</script>
+</body>
+</html>

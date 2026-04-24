@@ -1,0 +1,190 @@
+The 8 Agents
+1. 🎯 LeadQualifierAgent
+Simple explanation: The agent that decides if a new lead is worth your time.
+What it does:
+
+When a new contact/lead comes in, it immediately scores them
+Uses BANT scoring — does this person have Budget, Authority, Need, and Timeline?
+Reads everything in the CRM about them — company size, industry, revenue
+Gives them a score like 72/100 and labels them Hot, Warm, or Cold
+If Hot → automatically triggers NurturerAgent to draft a first email
+Creates tasks for the rep like "Call this person today"
+
+Real example:
+
+Alex Johnson fills a form on your website. LeadQualifierAgent sees he works at a 500-person tech company, is a VP (decision maker), and mentioned "looking for CRM for Q2". Scores him 85/100 HOT. Immediately tells NurturerAgent to draft a first-touch email.
+
+Autonomy: Fully automatic — runs without asking you anything
+
+2. 🔍 ResearchAgent
+Simple explanation: Your personal internet researcher that profiles every company and contact before you talk to them.
+What it does:
+
+When an account or contact is added, immediately researches them
+Finds company news, recent funding, job postings, tech stack
+Identifies growth signals — "they're hiring 10 salespeople = expansion"
+Stores findings in AI memory so all future drafts reference this intel
+Updates the account/contact record with everything it finds
+
+Real example:
+
+You add Meridian Healthcare as an account. ResearchAgent finds: "Meridian raised $40M Series B in March, recently posted VP of Sales role, uses Salesforce currently, 501-1000 employees." Now when NurturerAgent drafts an email to Robert Kim at Meridian, it references this context specifically.
+
+Autonomy: Fully automatic — no human approval needed (it only reads, never sends anything)
+
+3. 💌 NurturerAgent
+Simple explanation: Your AI copywriter that writes personalized emails and SMS messages for every situation.
+What it does:
+
+Drafts first-touch cold outreach emails
+Drafts follow-up emails after demos
+Drafts re-engagement messages for stalled deals
+Drafts post-close thank you + referral ask emails
+Writes SMS check-ins
+Uses ALL available context — deal stage, company research, last activity, days stalled — to make it personal
+NEVER sends anything — always puts it in your Approvals inbox first
+
+Real example:
+
+Meridian deal stalled 14 days. DealOrchestratorAgent flags it. NurturerAgent drafts: "Hi Robert, Following our demo last week where David raised HIPAA compliance concerns — I wanted to share our security documentation specifically for healthcare organizations your size. Does Thursday work for a 30-min call?" — references the actual blocker, the actual person, the actual industry.
+
+Autonomy: Drafts only — YOU must approve before anything sends
+
+4. 👁️ OpportunityWatchAgent
+Simple explanation: The agent that watches the news and tells you the perfect moment to reach out.
+What it does:
+
+Monitors public signals about your accounts — news, job postings, LinkedIn changes
+Spots buying signals like "company just raised funding" or "just hired a new CTO"
+Pings you when the timing is right to reach out
+Does NOT draft anything itself — just surfaces the opportunity
+Example alert: "GreenLeaf Manufacturing just posted 5 Sales Director roles — good time to reach out about scaling their CRM"
+
+Real example:
+
+You're targeting Atlas Financial Group. OpportunityWatchAgent notices they just announced expansion into 3 new markets. It alerts you: "🔔 Atlas Financial expanding — perfect time to reach out about CRM scaling." You then trigger NurturerAgent manually.
+
+Autonomy: Fully automatic — just notifies you, no external actions
+
+5. 📄 ProposalAgent
+Simple explanation: Automatically generates a complete sales proposal document when a deal reaches the Proposal stage.
+What it does:
+
+When a deal moves to Proposal stage, generates a full proposal document
+Pulls data from the deal — amount, products, line items, close date
+Pulls account info — company name, industry, size
+Uses your team's proposal template
+Fills everything in automatically
+Creates the document and attaches it to the deal
+Does NOT send it — you download/share it yourself
+
+Real example:
+
+TechVista Enterprise License deal moves to Proposal stage. ProposalAgent generates: "Acufy Enterprise CRM Proposal for TechVista Solutions — 1x Enterprise Plan @ $95,400/year, includes implementation timeline, HIPAA compliance documentation, 6-week onboarding plan." Ready to attach to an email and send.
+
+Autonomy: Fully automatic for document creation — no approval needed since it's internal
+
+6. 🎯 DealOrchestratorAgent
+Simple explanation: The agent that watches your pipeline and tells you what to do next on every deal.
+What it does:
+
+Monitors ALL deals in the pipeline constantly
+Flags deals that are stuck or going cold
+Analyzes deal health — healthy, at risk, stalled, critical
+Suggests specific next actions — "send follow-up email", "schedule demo", "address pricing objection"
+If a deal is stalled, automatically triggers NurturerAgent to draft a re-engagement email
+Creates AI-proposed tasks for the rep
+Tracks if documents have been collected, stakeholders engaged, etc.
+
+Real example:
+
+Meridian deal hasn't moved in 14 days. DealOrchestratorAgent flags it as STALLED, health score 42/100. Says: "Decision maker Robert Kim hasn't been contacted in 10 days. David Thompson (Influencer) raised security concerns that haven't been addressed. Recommend: send security documentation email + schedule technical call." Automatically triggers NurturerAgent.
+
+Autonomy: Analysis is automatic — external communication still needs your approval
+
+7. 📅 SchedulerAgent
+Simple explanation: The agent that finds meeting times and drafts scheduling emails without you checking your calendar manually.
+What it does:
+
+When a demo or meeting needs to be scheduled, checks your Google Calendar
+Finds 3-4 available slots that work for you
+Drafts an email to the prospect with proposed times
+Email goes into Approvals for you to review before sending
+After you approve, creates the calendar event automatically
+Handles the back-and-forth scheduling process
+
+Real example:
+
+DealOrchestratorAgent recommends scheduling a technical demo for Meridian. SchedulerAgent checks your calendar, finds you're free Thursday 2pm, Friday 10am, and next Monday 3pm. Drafts: "Hi Robert, I'd love to schedule a technical demo to address your team's security questions. I'm available Thursday at 2pm, Friday at 10am, or Monday at 3pm — does any of these work for you?" Goes to Approvals for your review.
+
+Autonomy: Draft only — YOU approve the scheduling email before it sends
+
+8. 🛡️ ComplianceAgent
+Simple explanation: The legal guardrail that checks every single draft before it reaches your Approvals inbox — you cannot bypass it.
+What it does:
+
+Runs on EVERY draft before it becomes an approval
+Checks 5 rules on every draft:
+
+TCPA — Does this person have SMS consent? If not, BLOCKS the SMS
+CAN-SPAM — Does the email have an unsubscribe link and physical address? If not, BLOCKS
+GDPR/CCPA — Is there any PII being processed illegally? BLOCKS if yes
+Anti-Discrimination — Does the message reference race, religion, gender, age, disability, or any protected class in a discriminatory way? BLOCKS if yes
+Honesty — Are all claims grounded in real CRM data (prices, timelines, capabilities)? WARNS if something seems invented
+
+
+If it blocks → draft never reaches you, you get an error message
+If it warns → draft reaches you with a yellow warning, you must check a box to override
+Cannot be disabled for TCPA and CAN-SPAM (these are laws)
+
+Real example:
+
+NurturerAgent drafts an SMS to Emily Watson. ComplianceAgent checks: Emily has NO SMS consent. BLOCKS immediately. You see: "Cannot create SMS approval — Emily Watson has revoked SMS consent." NurturerAgent never creates the approval. You'd need to email her instead.
+
+Autonomy: Always blocking — runs automatically on EVERYTHING, no one can skip it
+
+How They Work Together
+Here's the full picture in one flow:
+New lead comes in
+      ↓
+LeadQualifierAgent → scores them (BANT)
+      ↓
+ResearchAgent → researches their company
+      ↓
+NurturerAgent → drafts first-touch email
+      ↓
+ComplianceAgent → checks all 5 rules
+      ↓
+You → approve in inbox
+      ↓
+Email sends via SendGrid
+      ↓
+14 days later — no reply
+      ↓
+DealOrchestratorAgent → flags deal stalled
+      ↓
+NurturerAgent → drafts re-engagement email
+      ↓
+ComplianceAgent → checks again
+      ↓
+You → approve
+      ↓
+They reply — want a demo
+      ↓
+SchedulerAgent → finds times, drafts scheduling email
+      ↓
+You → approve
+      ↓
+Demo happens, deal moves to Proposal
+      ↓
+ProposalAgent → generates proposal document
+      ↓
+NurturerAgent → drafts proposal email
+      ↓
+You → approve
+      ↓
+Deal won 🎉
+      ↓
+OpportunityWatchAgent → watches for referral signals
+      ↓
+NurturerAgent → drafts referral ask

@@ -1,0 +1,158 @@
+import React from "react";
+import { useAppStore } from "../lib/store";
+import {
+  LayoutDashboard,
+  Users,
+  Building2,
+  Briefcase,
+  Package,
+  CheckSquare,
+  Calendar,
+  Wand2,
+  CheckCircle,
+  PanelLeft,
+} from "lucide-react";
+
+const NAV_ITEMS = [
+  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { label: "Contacts", icon: Users, path: "/contacts" },
+  { label: "Accounts", icon: Building2, path: "/accounts" },
+  { label: "Deals", icon: Briefcase, path: "/deals" },
+  { label: "Products", icon: Package, path: "/products" },
+  { label: "Tasks", icon: CheckSquare, path: "/tasks" },
+  { label: "Calendar", icon: Calendar, path: "/calendar" },
+];
+
+const AI_ITEMS = [
+  { label: "AI Command", icon: Wand2, path: "/ai" },
+  { label: "Approvals", icon: CheckCircle, path: "/approvals" },
+];
+
+export default function Sidebar() {
+  const navPosition = useAppStore((s) => s.navPosition);
+  const toggleNavPosition = useAppStore((s) => s.toggleNavPosition);
+
+  if (navPosition !== "left") {
+    return null;
+  }
+
+  const handleNavClick = (path: string) => {
+    window.location.hash = path;
+  };
+
+  const renderNavSection = (items: typeof NAV_ITEMS, title?: string) => (
+    <div style={{ marginBottom: "2rem" }}>
+      {title && (
+        <div
+          style={{
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            color: "var(--text-tertiary)",
+            paddingLeft: "1rem",
+            marginBottom: "0.75rem",
+            letterSpacing: "0.05em",
+          }}
+        >
+          {title}
+        </div>
+      )}
+      {items.map((item) => {
+        const Icon = item.icon;
+        const isActive = window.location.hash.slice(1) === item.path ||
+                        (item.path !== "/" && window.location.hash.slice(1).startsWith(item.path));
+
+        return (
+          <button
+            key={item.path}
+            onClick={() => handleNavClick(item.path)}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.75rem",
+              padding: "0.75rem 1rem",
+              border: "none",
+              background: isActive ? "var(--bg-secondary)" : "transparent",
+              color: isActive ? "var(--accent)" : "var(--text-secondary)",
+              cursor: "pointer",
+              fontSize: "0.9rem",
+              fontWeight: 500,
+              borderRadius: "0.375rem",
+              transition: "all 200ms ease",
+              marginBottom: "0.25rem",
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive) {
+                (e.currentTarget as HTMLElement).style.background = "var(--bg-secondary)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive) {
+                (e.currentTarget as HTMLElement).style.background = "transparent";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-secondary)";
+              }
+            }}
+          >
+            <Icon size={18} />
+            <span>{item.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <div
+      style={{
+        width: "240px",
+        backgroundColor: "var(--bg-base)",
+        borderRight: "1px solid var(--border-color)",
+        padding: "1rem 0",
+        height: "100vh",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        overflowY: "auto",
+        zIndex: 40,
+      }}
+    >
+      {/* Toggle button at top */}
+      <div style={{ padding: "0 1rem", marginBottom: "1rem" }}>
+        <button
+          onClick={toggleNavPosition}
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem",
+            padding: "0.5rem",
+            border: "1px solid var(--border-color)",
+            background: "transparent",
+            color: "var(--text-secondary)",
+            cursor: "pointer",
+            borderRadius: "0.375rem",
+            fontSize: "0.8rem",
+            transition: "all 200ms ease",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "var(--bg-secondary)";
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border-color)";
+          }}
+        >
+          <PanelLeft size={16} />
+          <span>Top Nav</span>
+        </button>
+      </div>
+
+      {renderNavSection(NAV_ITEMS, "Main")}
+      {renderNavSection(AI_ITEMS, "AI")}
+    </div>
+  );
+}
