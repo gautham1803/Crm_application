@@ -62,13 +62,13 @@ export default function TopBar() {
   }, []);
 
   useEffect(() => {
-    if (bellRef.current && pendingApprovalsCount() > 0) {
+    if (bellRef.current && pendingApprovalsCount > 0) {
       gsap.fromTo(bellRef.current,
         { rotation: -10 },
         { rotation: 10, duration: 0.07, repeat: 5, yoyo: true, ease: "power1.inOut", onComplete: () => { gsap.set(bellRef.current, { rotation: 0 }); } }
       );
     }
-  }, [pendingApprovalsCount()]);
+  }, [pendingApprovalsCount]);
 
   const navigate = (path: string) => { window.location.hash = path; };
   const isActive = (path: string) =>

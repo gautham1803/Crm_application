@@ -107,13 +107,13 @@ export default function Sidebar() {
             </div>
             
             {/* Badges */}
-            {(item as any).badgeType === "approvals" && pendingApprovalsCount() > 0 && (
+            {(item as any).badgeType === "approvals" && pendingApprovalsCount > 0 && (
               <span style={{
                 background: "var(--ai)", color: "#fff",
                 fontSize: 10, fontWeight: 700, padding: "2px 6px",
                 borderRadius: 12, fontFamily: "var(--font-mono)", lineHeight: 1,
               }}>
-                {pendingApprovalsCount()}
+                {pendingApprovalsCount}
               </span>
             )}
             {(item as any).badgeType === "oppAlerts" && opportunityAlerts.filter(a => !a.dismissed).length > 0 && (
