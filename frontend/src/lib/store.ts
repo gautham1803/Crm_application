@@ -230,23 +230,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   pendingApprovalsCount: () => get().approvalsList.filter(a => !a.dismissed).length,
 
   // Notifications
-  notifications: [
-    {
-      id: "n1", type: "ai_draft", title: "NurturerAgent drafted email",
-      description: "Follow-up email for Robert Kim at Meridian Healthcare",
-      timestamp: new Date(Date.now() - 30 * 60000).toISOString(), read: false, link: "/approvals",
-    },
-    {
-      id: "n2", type: "deal_stage", title: "Deal stage changed",
-      description: "NovaStar Starter moved to Closed Won",
-      timestamp: new Date(Date.now() - 3 * 3600000).toISOString(), read: false, link: "/deals",
-    },
-    {
-      id: "n3", type: "agent_complete", title: "ResearchAgent completed",
-      description: "GreenLeaf Manufacturing profile enriched with 12 new signals",
-      timestamp: new Date(Date.now() - 5 * 3600000).toISOString(), read: true, link: "/accounts",
-    },
-  ],
+  notifications: [],
   addNotification: (n) =>
     set((s) => ({
       notifications: [
