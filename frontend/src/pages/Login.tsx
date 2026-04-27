@@ -115,27 +115,39 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       {/* ── Left panel: Branding ─────────────────────────── */}
       <div style={{
         flex: "1 1 55%", display: "flex", flexDirection: "column",
-        justifyContent: "center", alignItems: "center",
-        padding: "2rem 4%", position: "relative", zIndex: 1,
+        justifyContent: "center", padding: "2rem 6%",
+        position: "relative", zIndex: 1,
       }}>
-        {/* Logo image */}
-        <img
-          src="/acufy-logo.svg"
-          alt="Acufy AI"
-          style={{
-            maxWidth: 360, width: "80%", height: "auto",
-            marginBottom: 32, filter: theme === "dark" ? "drop-shadow(0 0 40px var(--accent-glow))" : "none",
-            animation: "loginLogoIn 1s cubic-bezier(0.16, 1, 0.3, 1)",
-          }}
-        />
+        {/* Logo */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 48 }}>
+          <div style={{
+            width: 48, height: 48, borderRadius: 14,
+            background: "linear-gradient(135deg, var(--accent), #8B5CF6)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "0 0 40px var(--accent-glow), 0 4px 16px rgba(0,0,0,0.2)",
+            animation: "loginPulse 3s ease-in-out infinite",
+          }}>
+            <Sparkles style={{ width: 24, height: 24, color: "#fff" }} />
+          </div>
+          <div>
+            <span style={{
+              fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800,
+              color: "var(--text-primary)", letterSpacing: "-0.02em",
+            }}>Acufy</span>
+            <span style={{
+              display: "block", fontSize: 10, fontWeight: 600,
+              color: "var(--text-tertiary)", textTransform: "uppercase",
+              letterSpacing: "0.14em",
+            }}>CRM Platform</span>
+          </div>
+        </div>
 
-        {/* Tagline */}
+        {/* Headline */}
         <h1 style={{
           fontFamily: "var(--font-display)",
-          fontSize: "clamp(1.6rem, 2.8vw, 2.4rem)",
+          fontSize: "clamp(2.2rem, 3.8vw, 3.4rem)",
           fontWeight: 800, color: "var(--text-primary)",
-          lineHeight: 1.15, textAlign: "center", marginBottom: 14,
-          letterSpacing: "-0.03em",
+          lineHeight: 1.08, marginBottom: 20, letterSpacing: "-0.03em",
         }}>
           Close deals faster<br />
           <span style={{
@@ -148,8 +160,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           </span>
         </h1>
         <p style={{
-          fontSize: 14, color: "var(--text-secondary)", maxWidth: 400,
-          lineHeight: 1.6, textAlign: "center",
+          fontSize: 16, color: "var(--text-secondary)", maxWidth: 460,
+          lineHeight: 1.7,
         }}>
           Autonomous agents that qualify leads, draft outreach, and orchestrate your pipeline — with compliance built in.
         </p>
