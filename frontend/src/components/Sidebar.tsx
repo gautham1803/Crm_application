@@ -136,7 +136,8 @@ export default function Sidebar() {
       style={{
         width: "240px",
         backgroundColor: "var(--bg-base)",
-        borderRight: "1px solid var(--border-default)",
+        borderRight: "1px solid var(--border-strong)",
+        boxShadow: "4px 0 24px rgba(0,0,0,0.04)",
         padding: "1rem 0",
         height: "100vh",
         position: "fixed",
