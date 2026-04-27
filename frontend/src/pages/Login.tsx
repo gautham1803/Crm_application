@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useAppStore } from "../lib/store";
 import {
-  Sparkles, Eye, EyeOff, ArrowRight, Shield, Zap, BarChart3,
-  Lock, Sun, Moon, BrainCircuit, Target, TrendingUp,
+  Eye, EyeOff, ArrowRight,
+  Lock, Sun, Moon, Sparkles,
 } from "lucide-react";
 
 interface LoginPageProps {
@@ -47,27 +47,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
   const triggerShake = () => { setShake(true); setTimeout(() => setShake(false), 600); };
 
-  const stats = [
-    { value: "12k+", label: "Deals Closed" },
-    { value: "98%", label: "Uptime" },
-    { value: "4.9★", label: "User Rating" },
-  ];
-
-  const features = [
-    { icon: BrainCircuit, title: "Autonomous Agents", desc: "AI qualifies leads, drafts outreach & schedules meetings" },
-    { icon: Target, title: "Pipeline Intelligence", desc: "Real-time win probability and deal health scoring" },
-    { icon: TrendingUp, title: "Revenue Signals", desc: "Opportunity watch detects expansion & upsell signals" },
-    { icon: Shield, title: "Compliance Built-In", desc: "CAN-SPAM, GDPR & consent checks on every message" },
-  ];
-
   return (
     <div style={{
-      minHeight: "100vh", display: "flex",
+      height: "100vh", display: "flex",
       background: "var(--bg-base)", fontFamily: "var(--font-body)",
       position: "relative", overflow: "hidden",
     }}>
 
-      {/* ── Animated mesh gradient background ────────────── */}
+      {/* ── Background effects ───────────────────────────── */}
       <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }}>
         <div style={{
           position: "absolute", width: 700, height: 700, borderRadius: "50%",
@@ -87,20 +74,17 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           top: "40%", left: "50%", transform: "translateX(-50%)", filter: "blur(60px)",
           animation: "loginOrb3 10s ease-in-out infinite alternate",
         }} />
-
-        {/* Grid pattern overlay */}
         <div style={{
           position: "absolute", inset: 0,
           backgroundImage: `linear-gradient(var(--border-subtle) 1px, transparent 1px),
                             linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-          opacity: 0.4,
+          backgroundSize: "60px 60px", opacity: 0.4,
           maskImage: "radial-gradient(ellipse at 60% 40%, black 20%, transparent 70%)",
           WebkitMaskImage: "radial-gradient(ellipse at 60% 40%, black 20%, transparent 70%)",
         }} />
       </div>
 
-      {/* ── Theme toggle (top-right) ─────────────────────── */}
+      {/* ── Theme toggle ─────────────────────────────────── */}
       <button
         onClick={toggleTheme}
         style={{
@@ -109,8 +93,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           background: "var(--bg-card)", border: "1px solid var(--border-strong)",
           display: "flex", alignItems: "center", justifyContent: "center",
           cursor: "pointer", transition: "all 0.3s",
-          boxShadow: "0 2px 12px rgba(0,0,0,0.12)",
-          color: "var(--text-secondary)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.12)", color: "var(--text-secondary)",
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.borderColor = "var(--accent)";
@@ -132,39 +115,27 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
       {/* ── Left panel: Branding ─────────────────────────── */}
       <div style={{
         flex: "1 1 55%", display: "flex", flexDirection: "column",
-        justifyContent: "center", padding: "4rem 6%",
-        position: "relative", zIndex: 1,
+        justifyContent: "center", alignItems: "center",
+        padding: "2rem 4%", position: "relative", zIndex: 1,
       }}>
-        {/* Logo */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 56 }}>
-          <div style={{
-            width: 48, height: 48, borderRadius: 14,
-            background: "linear-gradient(135deg, var(--accent), #8B5CF6)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 0 40px var(--accent-glow), 0 4px 16px rgba(0,0,0,0.2)",
-            animation: "loginPulse 3s ease-in-out infinite",
-          }}>
-            <Sparkles style={{ width: 24, height: 24, color: "#fff" }} />
-          </div>
-          <div>
-            <span style={{
-              fontFamily: "var(--font-display)", fontSize: 28, fontWeight: 800,
-              color: "var(--text-primary)", letterSpacing: "-0.02em",
-            }}>Acufy</span>
-            <span style={{
-              display: "block", fontSize: 10, fontWeight: 600,
-              color: "var(--text-tertiary)", textTransform: "uppercase",
-              letterSpacing: "0.14em",
-            }}>CRM Platform</span>
-          </div>
-        </div>
+        {/* Logo image */}
+        <img
+          src="/acufy-logo.svg"
+          alt="Acufy AI"
+          style={{
+            maxWidth: 360, width: "80%", height: "auto",
+            marginBottom: 32, filter: theme === "dark" ? "drop-shadow(0 0 40px var(--accent-glow))" : "none",
+            animation: "loginLogoIn 1s cubic-bezier(0.16, 1, 0.3, 1)",
+          }}
+        />
 
-        {/* Headline */}
+        {/* Tagline */}
         <h1 style={{
           fontFamily: "var(--font-display)",
-          fontSize: "clamp(2.2rem, 3.8vw, 3.4rem)",
+          fontSize: "clamp(1.6rem, 2.8vw, 2.4rem)",
           fontWeight: 800, color: "var(--text-primary)",
-          lineHeight: 1.08, marginBottom: 20, letterSpacing: "-0.03em",
+          lineHeight: 1.15, textAlign: "center", marginBottom: 14,
+          letterSpacing: "-0.03em",
         }}>
           Close deals faster<br />
           <span style={{
@@ -177,65 +148,11 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           </span>
         </h1>
         <p style={{
-          fontSize: 16, color: "var(--text-secondary)", maxWidth: 460,
-          lineHeight: 1.7, marginBottom: 40,
+          fontSize: 14, color: "var(--text-secondary)", maxWidth: 400,
+          lineHeight: 1.6, textAlign: "center",
         }}>
-          Autonomous agents that research accounts, qualify leads, draft compliant outreach, and forecast your pipeline — while you focus on relationships.
+          Autonomous agents that qualify leads, draft outreach, and orchestrate your pipeline — with compliance built in.
         </p>
-
-        {/* Stats row */}
-        <div style={{ display: "flex", gap: 32, marginBottom: 48 }}>
-          {stats.map((s, i) => (
-            <div key={i} style={{ textAlign: "center" }}>
-              <div style={{
-                fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 800,
-                background: "linear-gradient(135deg, var(--accent), var(--ai))",
-                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              }}>{s.value}</div>
-              <div style={{ fontSize: 11, color: "var(--text-tertiary)", fontWeight: 500, marginTop: 2 }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Feature grid */}
-        <div style={{
-          display: "grid", gridTemplateColumns: "1fr 1fr",
-          gap: 14, maxWidth: 500,
-        }}>
-          {features.map((f, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex", alignItems: "flex-start", gap: 12,
-                padding: "14px 16px", borderRadius: "var(--r-md)",
-                background: "var(--bg-card)", border: "1px solid var(--border-subtle)",
-                transition: "all 0.3s ease", cursor: "default",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-accent)";
-                e.currentTarget.style.boxShadow = "0 0 24px var(--accent-glow)";
-                e.currentTarget.style.transform = "translateY(-2px)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-subtle)";
-                e.currentTarget.style.boxShadow = "none";
-                e.currentTarget.style.transform = "translateY(0)";
-              }}
-            >
-              <div style={{
-                width: 34, height: 34, borderRadius: 8, flexShrink: 0,
-                background: i % 2 === 0 ? "var(--accent-glow)" : "var(--ai-glow)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <f.icon style={{ width: 16, height: 16, color: i % 2 === 0 ? "var(--accent)" : "var(--ai)" }} />
-              </div>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)", marginBottom: 2 }}>{f.title}</div>
-                <div style={{ fontSize: 11, color: "var(--text-tertiary)", lineHeight: 1.4 }}>{f.desc}</div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* ── Right panel: Login form ──────────────────────── */}
@@ -244,9 +161,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         justifyContent: "center", padding: "2rem", position: "relative", zIndex: 1,
       }}>
         <div style={{
-          width: "100%", maxWidth: 400, padding: "36px 32px",
-          borderRadius: 20,
-          background: "var(--bg-card)",
+          width: "100%", maxWidth: 380, padding: "32px 28px",
+          borderRadius: 20, background: "var(--bg-card)",
           border: "1px solid var(--border-strong)",
           boxShadow: `0 24px 80px rgba(0,0,0,0.2),
                       0 0 0 1px var(--border-subtle),
@@ -256,9 +172,9 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         }}>
 
           {/* Card header */}
-          <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
             <div style={{
-              width: 56, height: 56, borderRadius: 16, margin: "0 auto 16px",
+              width: 52, height: 52, borderRadius: 14, margin: "0 auto 14px",
               background: success
                 ? "linear-gradient(135deg, var(--success), #059669)"
                 : "linear-gradient(135deg, var(--accent-glow), var(--ai-glow))",
@@ -268,28 +184,28 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               boxShadow: success ? "0 0 32px var(--success-glow)" : "none",
             }}>
               {success
-                ? <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" style={{ strokeDasharray: 30, strokeDashoffset: 0, animation: "loginCheck 0.4s ease-out" }} /></svg>
-                : <Lock style={{ width: 26, height: 26, color: "var(--accent)" }} />}
+                ? <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" style={{ strokeDasharray: 30, strokeDashoffset: 0, animation: "loginCheck 0.4s ease-out" }} /></svg>
+                : <Lock style={{ width: 24, height: 24, color: "var(--accent)" }} />}
             </div>
             <h2 style={{
-              fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 700,
-              color: "var(--text-primary)", marginBottom: 6,
+              fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 700,
+              color: "var(--text-primary)", marginBottom: 4,
             }}>
               {success ? "Welcome!" : "Sign in"}
             </h2>
-            <p style={{ fontSize: 13, color: "var(--text-tertiary)" }}>
+            <p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
               {success ? "Redirecting to your dashboard…" : "Enter your credentials to continue"}
             </p>
           </div>
 
           {/* Form */}
           {!success && (
-            <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <form ref={formRef} onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               {/* Username */}
               <div>
                 <label htmlFor="login-username" style={{
                   display: "block", fontSize: 11, fontWeight: 600,
-                  color: "var(--text-secondary)", marginBottom: 6,
+                  color: "var(--text-secondary)", marginBottom: 5,
                   textTransform: "uppercase", letterSpacing: "0.08em",
                 }}>Username</label>
                 <input
@@ -297,7 +213,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                   placeholder="Enter username" value={username}
                   onChange={(e) => { setUsername(e.target.value); setError(""); }}
                   style={{
-                    width: "100%", padding: "12px 14px", borderRadius: 8,
+                    width: "100%", padding: "11px 14px", borderRadius: 8,
                     border: `1.5px solid ${error ? "var(--error)" : "var(--border-default)"}`,
                     background: "var(--bg-elevated)", color: "var(--text-primary)",
                     fontSize: 14, fontFamily: "var(--font-body)", outline: "none",
@@ -317,7 +233,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               <div>
                 <label htmlFor="login-password" style={{
                   display: "block", fontSize: 11, fontWeight: 600,
-                  color: "var(--text-secondary)", marginBottom: 6,
+                  color: "var(--text-secondary)", marginBottom: 5,
                   textTransform: "uppercase", letterSpacing: "0.08em",
                 }}>Password</label>
                 <div style={{ position: "relative" }}>
@@ -327,7 +243,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
                     value={password}
                     onChange={(e) => { setPassword(e.target.value); setError(""); }}
                     style={{
-                      width: "100%", padding: "12px 44px 12px 14px", borderRadius: 8,
+                      width: "100%", padding: "11px 44px 11px 14px", borderRadius: 8,
                       border: `1.5px solid ${error ? "var(--error)" : "var(--border-default)"}`,
                       background: "var(--bg-elevated)", color: "var(--text-primary)",
                       fontSize: 14, fontFamily: "var(--font-body)", outline: "none",
@@ -358,7 +274,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
               {/* Error */}
               {error && (
                 <div style={{
-                  fontSize: 12, color: "var(--error)", padding: "10px 14px",
+                  fontSize: 12, color: "var(--error)", padding: "9px 14px",
                   borderRadius: 8, background: "rgba(248,113,113,0.06)",
                   border: "1px solid rgba(248,113,113,0.15)", textAlign: "center",
                   animation: "loginFadeIn 0.3s ease-out",
@@ -369,15 +285,14 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
 
               {/* Submit */}
               <button type="submit" disabled={isLoading} style={{
-                width: "100%", padding: "13px 20px", borderRadius: 10,
+                width: "100%", padding: "12px 20px", borderRadius: 10,
                 border: "none",
                 background: isLoading ? "var(--accent-dim)" : "linear-gradient(135deg, var(--accent), #7C3AED)",
                 color: "#fff", fontSize: 14, fontWeight: 600,
                 fontFamily: "var(--font-body)", cursor: isLoading ? "wait" : "pointer",
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                 transition: "all 0.3s ease",
-                boxShadow: "0 4px 20px var(--accent-glow)",
-                marginTop: 4,
+                boxShadow: "0 4px 20px var(--accent-glow)", marginTop: 2,
               }}
                 onMouseEnter={(e) => {
                   if (!isLoading) { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 8px 32px var(--accent-glow)"; }
@@ -405,12 +320,11 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
           {/* Demo hint */}
           {!success && (
             <div style={{
-              marginTop: 20, padding: "12px 16px", borderRadius: 10,
+              marginTop: 16, padding: "10px 14px", borderRadius: 10,
               background: "linear-gradient(135deg, var(--ai-glow), rgba(56,189,248,0.05))",
-              border: "1px solid rgba(167,139,250,0.12)",
-              textAlign: "center",
+              border: "1px solid rgba(167,139,250,0.12)", textAlign: "center",
             }}>
-              <div style={{ fontSize: 10, color: "var(--ai)", fontWeight: 700, marginBottom: 4, letterSpacing: "0.08em" }}>
+              <div style={{ fontSize: 10, color: "var(--ai)", fontWeight: 700, marginBottom: 3, letterSpacing: "0.08em" }}>
                 <Sparkles style={{ width: 11, height: 11, display: "inline", verticalAlign: "-1.5px", marginRight: 4 }} />
                 DEMO ACCESS
               </div>
@@ -429,9 +343,8 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             </div>
           )}
 
-          {/* Footer */}
-          <p style={{ textAlign: "center", fontSize: 10, color: "var(--text-tertiary)", marginTop: 20, letterSpacing: "0.02em" }}>
-            © 2026 Acufy CRM · Built with AI
+          <p style={{ textAlign: "center", fontSize: 10, color: "var(--text-tertiary)", marginTop: 16, letterSpacing: "0.02em" }}>
+            © 2026 Acufy CRM · Precision Intelligence
           </p>
         </div>
       </div>
@@ -441,6 +354,10 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         @keyframes loginCardIn {
           from { opacity: 0; transform: translateY(32px) scale(0.96); }
           to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes loginLogoIn {
+          from { opacity: 0; transform: scale(0.8) translateY(20px); }
+          to   { opacity: 1; transform: scale(1) translateY(0); }
         }
         @keyframes loginShake {
           0%, 100% { transform: translateX(0); }
@@ -457,10 +374,6 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
         }
         @keyframes loginSpin { to { transform: rotate(360deg); } }
         @keyframes loginFadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes loginPulse {
-          0%, 100% { box-shadow: 0 0 40px var(--accent-glow), 0 4px 16px rgba(0,0,0,0.2); }
-          50% { box-shadow: 0 0 56px var(--accent-glow), 0 4px 24px rgba(0,0,0,0.25); }
-        }
         @keyframes loginGradient {
           0% { background-position: 0% 50%; }
           50% { background-position: 100% 50%; }

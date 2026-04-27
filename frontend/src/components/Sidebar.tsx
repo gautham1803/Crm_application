@@ -147,36 +147,33 @@ export default function Sidebar() {
         zIndex: 40,
       }}
     >
-      {/* Toggle button at top */}
-      <div style={{ padding: "0 1rem", marginBottom: "1rem" }}>
+      {/* Logo + toggle */}
+      <div style={{ padding: "0.75rem 1rem", marginBottom: "0.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <img
+          src="/acufy-logo.svg"
+          alt="Acufy AI"
+          style={{ height: 32, width: "auto", objectFit: "contain", cursor: "pointer" }}
+          onClick={() => { window.location.hash = "/"; }}
+        />
         <button
           onClick={toggleNavPosition}
           style={{
-            width: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.5rem",
-            padding: "0.5rem",
-            border: "1px solid var(--border-color)",
-            background: "transparent",
-            color: "var(--text-secondary)",
-            cursor: "pointer",
-            borderRadius: "0.375rem",
-            fontSize: "0.8rem",
-            transition: "all 200ms ease",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            padding: "6px", border: "1px solid var(--border-default)",
+            background: "transparent", color: "var(--text-tertiary)",
+            cursor: "pointer", borderRadius: 6, transition: "all 200ms ease",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.background = "var(--bg-secondary)";
-            (e.currentTarget as HTMLElement).style.borderColor = "var(--accent)";
+            (e.currentTarget as HTMLElement).style.background = "var(--bg-hover)";
+            (e.currentTarget as HTMLElement).style.color = "var(--accent)";
           }}
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLElement).style.background = "transparent";
-            (e.currentTarget as HTMLElement).style.borderColor = "var(--border-color)";
+            (e.currentTarget as HTMLElement).style.color = "var(--text-tertiary)";
           }}
+          title="Switch to top navigation"
         >
-          <PanelLeft size={16} />
-          <span>Top Nav</span>
+          <PanelLeft size={14} />
         </button>
       </div>
 

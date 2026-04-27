@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100">
+  <defs>
+    <linearGradient id="teal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2DD4BF"/>
+      <stop offset="100%" style="stop-color:#0EA5E9"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2DD4BF"/>
+      <stop offset="60%" style="stop-color:#0EA5E9"/>
+      <stop offset="100%" style="stop-color:#38BDF8"/>
+    </linearGradient>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FBBF24"/>
+      <stop offset="100%" style="stop-color:#A78BFA"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Brain/Circuit Icon -->
+  <g transform="translate(10, 8) scale(0.85)">
+    <!-- Main brain outline -->
+    <path d="M50 15 C35 15, 20 25, 20 42 C20 55, 28 62, 35 66 L35 75 C35 78, 37 80, 40 80 L60 80 C63 80, 65 78, 65 75 L65 66 C72 62, 80 55, 80 42 C80 25, 65 15, 50 15Z" fill="none" stroke="url(#teal)" stroke-width="3" stroke-linecap="round"/>
+    <!-- Circuit nodes -->
+    <circle cx="35" cy="30" r="4" fill="url(#teal)"/>
+    <circle cx="50" cy="22" r="4" fill="url(#teal)"/>
+    <circle cx="65" cy="30" r="4" fill="url(#teal)"/>
+    <circle cx="30" cy="48" r="3.5" fill="#0EA5E9"/>
+    <circle cx="70" cy="48" r="3.5" fill="#0EA5E9"/>
+    <circle cx="50" cy="55" r="4" fill="#2DD4BF"/>
+    <!-- Circuit lines -->
+    <line x1="35" y1="30" x2="50" y2="22" stroke="url(#teal)" stroke-width="2"/>
+    <line x1="50" y1="22" x2="65" y2="30" stroke="url(#teal)" stroke-width="2"/>
+    <line x1="35" y1="30" x2="30" y2="48" stroke="url(#teal)" stroke-width="2"/>
+    <line x1="65" y1="30" x2="70" y2="48" stroke="url(#teal)" stroke-width="2"/>
+    <line x1="30" y1="48" x2="50" y2="55" stroke="#0EA5E9" stroke-width="2"/>
+    <line x1="70" y1="48" x2="50" y2="55" stroke="#0EA5E9" stroke-width="2"/>
+    <!-- Node stems going up -->
+    <line x1="35" y1="30" x2="35" y2="16" stroke="url(#teal)" stroke-width="2"/>
+    <circle cx="35" cy="14" r="2.5" fill="#2DD4BF"/>
+    <line x1="50" y1="22" x2="50" y2="8" stroke="url(#teal)" stroke-width="2"/>
+    <circle cx="50" cy="6" r="2.5" fill="#2DD4BF"/>
+    <line x1="65" y1="30" x2="65" y2="16" stroke="url(#teal)" stroke-width="2"/>
+    <circle cx="65" cy="14" r="2.5" fill="#2DD4BF"/>
+  </g>
+  
+  <!-- Text "Acufy" -->
+  <text x="105" y="55" font-family="'Syne', 'Inter', sans-serif" font-size="42" font-weight="700" fill="url(#textGrad)" letter-spacing="-1">Acufy</text>
+  
+  <!-- Text "AI" -->
+  <text x="282" y="55" font-family="'Syne', 'Inter', sans-serif" font-size="42" font-weight="700" fill="url(#aiGrad)" letter-spacing="-1">AI</text>
+  
+  <!-- Tagline -->
+  <text x="105" y="78" font-family="'DM Sans', sans-serif" font-size="13" font-style="italic" fill="#94A3B8" letter-spacing="0.5">Precision Intelligence, Tailored to You.</text>
+</svg>
