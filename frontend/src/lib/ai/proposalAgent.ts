@@ -92,7 +92,7 @@ Primary contact: ${dealCtx.primaryContact ? `${dealCtx.primaryContact.name} (${d
       userPrompt,
       modelGroup: "mistral",
       requireJSON: true,
-      maxTokens: 1200,
+      maxTokens: 4000,
       temperature: 0.6,
       callerName: "ProposalAgent",
     });

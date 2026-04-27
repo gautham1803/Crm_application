@@ -190,15 +190,29 @@ export default function TopBar() {
       <div
         onClick={() => navigate("/")}
         style={{
-          display: "flex", alignItems: "center",
+          display: "flex", alignItems: "center", gap: 8,
           flexShrink: 0, marginRight: 16, cursor: "pointer",
         }}
       >
-        <img
-          src="/acufy-logo.svg"
-          alt="Acufy AI"
-          style={{ height: 30, width: "auto", objectFit: "contain" }}
-        />
+        <div style={{
+          width: 28, height: 28,
+          background: "linear-gradient(135deg,var(--accent),var(--ai))",
+          borderRadius: 8,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 0 16px rgba(56,189,248,0.3)",
+          flexShrink: 0,
+        }}>
+          <Zap style={{ width: 14, height: 14, color: "#fff", fill: "#fff" }} />
+        </div>
+        <div style={{
+          fontFamily: "var(--font-display)",
+          fontWeight: 700,
+          fontSize: 16,
+          letterSpacing: -0.3,
+          color: "var(--text-primary)",
+        }}>
+          Acufy
+        </div>
       </div>
 
       {/* Sidebar toggle */}
