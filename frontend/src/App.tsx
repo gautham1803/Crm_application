@@ -10,6 +10,7 @@ import AICommandPage from "./pages/AICommand";
 import ApprovalsPage from "./pages/Approvals";
 import CalendarPage from "./pages/Calendar";
 import OpportunityAlertsPage from "./pages/OpportunityAlerts";
+import LoginPage from "./pages/Login";
 import { wsClient } from "./lib/websocket";
 import { useAppStore } from "./lib/store";
 
@@ -28,10 +29,14 @@ function useHashRoute() {
 export default function App() {
   const route = useHashRoute();
   const devUser = useAppStore((state) => state.devUser);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return sessionStorage.getItem("acufy_auth") === "true";
+  });
 
   const TEAM_ID = "00000000-0000-0000-0000-000000000001";
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     const userIdMap: Record<string, string> = {
       admin: "00000000-0000-0000-0000-000000000002",
       manager: "00000000-0000-0000-0000-000000000003",
@@ -39,7 +44,16 @@ export default function App() {
     };
     wsClient.connect(TEAM_ID, userIdMap[devUser] || userIdMap["admin"]);
     return () => { wsClient.disconnect(); };
-  }, [devUser]);
+  }, [devUser, isAuthenticated]);
+
+  const handleLogin = () => {
+    sessionStorage.setItem("acufy_auth", "true");
+    setIsAuthenticated(true);
+  };
+
+  if (!isAuthenticated) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
 
   const renderPage = () => {
     switch (true) {
